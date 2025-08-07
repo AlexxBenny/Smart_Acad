@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generate KTU Question Paper</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Raleway', sans-serif;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(90deg, #C7C5F4, #776BCC);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .select-container {
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0px 0px 24px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #D4D3E8;
+        }
+        select, .radio-group {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 6px;
+            color: #5D54A4;
+            font-weight: 600;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            cursor: pointer;
+        }
+        .radio-option input {
+            margin-right: 10px;
+        }
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #fff;
+            color: #5D54A4;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            margin-top: 30px;
+        }
+        .btn-primary:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="select-container">
+        <h1><i class="fas fa-file-pdf"></i> Generate KTU Question Paper</h1>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="pdf_count">Number of study material PDFs (max 5):</label>
+                <select id="pdf_count" name="pdf_count" required>
+                    {% for i in range(1, 6) %}
+                    <option value="{{ i }}">{{ i }} PDF{{ 's' if i > 1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Would you like to upload past question papers to avoid duplicates?</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="has_past_papers" value="yes" required>
+                        <span>Yes, upload past papers (up to 5)</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="has_past_papers" value="no" checked>
+                        <span>No, generate without reference to past papers</span>
+                    </label>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-arrow-right"></i> Continue
+            </button>
+        </form>
+    </div>
+</body>
+</html>

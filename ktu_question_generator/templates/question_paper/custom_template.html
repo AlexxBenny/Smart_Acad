@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Custom Template</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Raleway', sans-serif;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(90deg, #C7C5F4, #776BCC);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .template-container {
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0px 0px 24px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 900px;
+            margin: 20px auto;
+        }
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 25px;
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #D4D3E8;
+        }
+        input[type="text"], input[type="number"] {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 6px;
+            color: #5D54A4;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .section-container {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .section-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #fff;
+        }
+        .section-fields {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #fff;
+            color: #5D54A4;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .btn-danger {
+            background: rgba(231, 76, 60, 0.2);
+            color: #f5b7b1;
+        }
+        .btn-danger:hover {
+            background: rgba(231, 76, 60, 0.3);
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+        .alert-error {
+            background: rgba(231, 76, 60, 0.2);
+            color: #f5b7b1;
+            border-left: 4px solid #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="template-container">
+        <h1><i class="fas fa-file-alt"></i> Create Custom Template</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i> {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST" id="templateForm">
+            <input type="hidden" name="step" value="custom_template">
+            
+            <div class="form-group">
+                <label>Template Details:</label>
+                <input type="text" name="template_name" placeholder="Template Name" required>
+                <input type="text" name="institution" placeholder="Institution Name" required>
+                <input type="text" name="course" placeholder="Course Name" required>
+                <input type="text" name="subject" placeholder="Subject Name" required>
+                <input type="number" name="total_marks" placeholder="Total Marks" min="1" required>
+                <input type="number" name="duration" placeholder="Duration (minutes)" min="1" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Sections:</label>
+                <div id="sections">
+                    <!-- Sections will be added here dynamically -->
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="addSection()">
+                    <i class="fas fa-plus"></i> Add Section
+                </button>
+            </div>
+            
+            <div class="action-buttons">
+                <button type="submit" class="btn">
+                    <i class="fas fa-save"></i> Save Template
+                </button>
+                <a href="{{ url_for('question_paper.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let sectionCount = 0;
+        
+        function addSection() {
+            const sectionsDiv = document.getElementById('sections');
+            const sectionDiv = document.createElement('div');
+            sectionDiv.className = 'section-container';
+            sectionDiv.innerHTML = `
+                <div class="section-header">
+                    <div class="section-title">Section ${sectionCount + 1}</div>
+                    <button type="button" class="btn btn-danger" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="section-fields">
+                    <input type="text" name="section_${sectionCount}_name" placeholder="Section Name" required>
+                    <select name="section_${sectionCount}_type" required>
+                        <option value="short_answer">Short Answer</option>
+                        <option value="long_answer">Long Answer</option>
+                        <option value="mcq">Multiple Choice</option>
+                        <option value="numerical">Numerical</option>
+                    </select>
+                    <input type="number" name="section_${sectionCount}_questions" placeholder="Number of Questions" min="1" required>
+                    <input type="number" name="section_${sectionCount}_marks" placeholder="Marks per Question" min="1" required>
+                </div>
+            `;
+            sectionsDiv.appendChild(sectionDiv);
+            sectionCount++;
+            document.querySelector('input[name="section_count"]').value = sectionCount;
+        }
+        
+        // Add initial section
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('templateForm');
+            const sectionCountInput = document.createElement('input');
+            sectionCountInput.type = 'hidden';
+            sectionCountInput.name = 'section_count';
+            sectionCountInput.value = '0';
+            form.appendChild(sectionCountInput);
+            addSection();
+        });
+    </script>
+</body>
+</html> 

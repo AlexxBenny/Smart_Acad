@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Attendance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #00b894;
+            --accent-color: #fd79a8;
+            --warning-color: #fdcb6e;
+            --danger-color: #e84393;
+            --dark-bg: #2d3436;
+            --light-bg: #ddd;
+            --card-bg: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--gradient-1);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            border: none;
+        }
+
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        h1 {
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0 30px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid #eee;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: var(--gradient-1);
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        tr:hover {
+            background: rgba(108, 92, 231, 0.05);
+        }
+
+        .attendance-good { color: #43e97b; font-weight: 700; }
+        .attendance-warning { color: var(--warning-color); font-weight: 700; }
+        .attendance-poor { color: var(--danger-color); font-weight: 700; }
+
+        .present {
+            color: var(--secondary-color);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .absent {
+            color: var(--danger-color);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 25px;
+            background: var(--gradient-3);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: none;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-btn i {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            .back-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-calendar-check"></i> MY ATTENDANCE</h1>
+        
+        <h2>ATTENDANCE SUMMARY</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Present Days</th>
+                    <th>Total Days</th>
+                    <th>Attendance %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in attendance_records %}
+                <tr>
+                    <td>{{ record.course_name }}</td>
+                    <td>{{ record.present_days }}</td>
+                    <td>{{ record.total_days }}</td>
+                    <td class="
+                        {% if record.attendance_percentage >= 75 %}attendance-good
+                        {% elif record.attendance_percentage >= 50 %}attendance-warning
+                        {% else %}attendance-poor
+                        {% endif %}
+                    ">
+                        {{ record.attendance_percentage }}%
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <h2>DETAILED RECORD</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in detailed_attendance %}
+                <tr>
+                    <td>{{ record.course_name }}</td>
+                    <td>{{ record.date }}</td>
+                    <td>
+                        {% if record.status == 1 %}
+                            <span class="present"><i class="fas fa-check-circle"></i> Present</span>
+                        {% else %}
+                            <span class="absent"><i class="fas fa-times-circle"></i> Absent</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ url_for('student_dashboard') }}" class="back-btn">
+            <i class="fas fa-arrow-left"></i> BACK TO DASHBOARD
+        </a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Saved Template</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
+    <style>
+        /* Gaming-inspired theme with vibrant colors */
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #00b894;
+            --accent-color: #fd79a8;
+            --warning-color: #fdcb6e;
+            --danger-color: #e84393;
+            --dark-bg: #2d3436;
+            --light-bg: #ddd;
+            --card-bg: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        * { 
+            font-family: 'Raleway', sans-serif; 
+            box-sizing: border-box; 
+        }
+        
+        body { 
+            background: var(--gradient-1); 
+            color: var(--text-primary); 
+            margin: 0; 
+            padding: 20px; 
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        
+        .container { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); 
+            width: 100%; 
+            max-width: 600px; 
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        h1 { 
+            color: var(--primary-color); 
+            margin-bottom: 30px; 
+            text-align: center; 
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .template-list { 
+            margin-bottom: 30px; 
+        }
+        
+        .template-item { 
+            background: rgba(108, 92, 231, 0.05); 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin-bottom: 15px; 
+            display: flex; 
+            align-items: center; 
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .template-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: rgba(108, 92, 231, 0.1);
+        }
+        
+        .template-radio { 
+            margin-right: 18px; 
+            accent-color: var(--primary-color);
+            transform: scale(1.2);
+        }
+        
+        .template-name { 
+            font-weight: 700; 
+            color: var(--text-primary); 
+            font-size: 1.1em; 
+            margin-bottom: 5px;
+        }
+        
+        .template-meta { 
+            color: var(--text-secondary); 
+            font-size: 0.95em; 
+        }
+        
+        .btn-primary { 
+            display: block; 
+            width: 100%; 
+            padding: 15px; 
+            background: var(--gradient-1); 
+            color: white; 
+            border: none; 
+            border-radius: 25px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            text-align: center; 
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .alert { 
+            padding: 15px; 
+            margin-bottom: 20px; 
+            border-radius: 10px; 
+            border-left: 4px solid;
+            color: var(--text-primary);
+        }
+        
+        .alert-error { 
+            background: rgba(232, 67, 147, 0.1); 
+            border-left-color: var(--danger-color); 
+        }
+        
+        .alert-success { 
+            background: rgba(0, 184, 148, 0.1); 
+            border-left-color: var(--secondary-color); 
+        }
+        
+        a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        a:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .btn-primary {
+                padding: 12px;
+                font-size: 1rem;
+            }
+            
+            .template-item {
+                padding: 15px;
+            }
+        }
+        
+        /* Animation for button */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .btn-primary:hover {
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-copy"></i> Select a Saved Template</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i> {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="POST">
+            <input type="hidden" name="step" value="choose_saved_template">
+            <div class="template-list">
+                {% for template in templates %}
+                <label class="template-item">
+                    <input type="radio" class="template-radio" name="template_id" value="{{ template.id }}" required>
+                    <div>
+                        <div class="template-name">{{ template.name }}</div>
+                        <div class="template-meta">Sections: {{ template.template_structure | tojson | safe | length }}</div>
+                    </div>
+                </label>
+                {% else %}
+                <div style="color:var(--text-secondary);">
+                    No saved templates found. <a href="{{ url_for('question_paper.index') }}">Create a new template</a>.
+                </div>
+                {% endfor %}
+            </div>
+            {% if templates %}
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-arrow-right"></i> Use Selected Template
+            </button>
+            {% endif %}
+        </form>
+    </div>
+</body>
+</html>

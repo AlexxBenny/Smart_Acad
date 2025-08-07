@@ -1,0 +1,597 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(90deg, #C7C5F4, #776BCC);
+            min-height: 100vh;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: none;
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #776BCC, #C7C5F4);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #C7C5F4, #776BCC);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(119, 107, 204, 0.4);
+        }
+        .btn-success {
+            background: linear-gradient(90deg, #776BCC, #C7C5F4);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .btn-success:hover {
+            background: linear-gradient(90deg, #C7C5F4, #776BCC);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(119, 107, 204, 0.4);
+        }
+        .loading {
+            display: none;
+        }
+        .success-message {
+            display: none;
+        }
+        .error-message {
+            display: none;
+        }
+        #flash-messages {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        #resultsContainer {
+            display: none;
+        }
+        .progress {
+            height: 25px;
+            background-color: rgba(199, 197, 244, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #776BCC, #C7C5F4);
+            font-size: 14px;
+            line-height: 25px;
+            transition: width 0.5s ease;
+        }
+        .question-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        .option-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        .option-btn:hover {
+            background-color: rgba(199, 197, 244, 0.2);
+            border-color: #776BCC;
+        }
+        .option-btn.selected {
+            background: linear-gradient(90deg, #776BCC, #C7C5F4);
+            color: white;
+            border-color: #776BCC;
+        }
+        #timer {
+            font-size: 18px;
+            font-weight: bold;
+            color: #776BCC;
+        }
+        h1 {
+            color: #776BCC;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        .card-title {
+            color: #776BCC;
+            font-weight: bold;
+        }
+        .question-number {
+            color: #776BCC;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .question-progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .question-timer {
+            background: linear-gradient(90deg, #776BCC, #C7C5F4);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .time-bonus {
+            font-size: 0.9em;
+            color: #4CAF50;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+        
+        .progress-circles {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            gap: 10px;
+        }
+        
+        .progress-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #776BCC;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #776BCC;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-circle.active {
+            background: #776BCC;
+            color: white;
+        }
+        
+        .progress-circle.completed {
+            background: #4CAF50;
+            border-color: #4CAF50;
+            color: white;
+        }
+        
+        .nav-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-buttons">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Go to Dashboard</a>
+    </div>
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Adaptive Test</h1>
+        
+        <!-- Flash Messages -->
+        <div id="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Generate Questions Section -->
+        <div id="generateSection" class="text-center">
+            <button id="generateBtn" class="btn btn-primary" onclick="generateQuestions(event)">
+                Generate Questions
+            </button>
+            <div class="loading mt-3">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Generating questions...</p>
+            </div>
+        </div>
+
+        <!-- Success Message Section -->
+        <div id="successSection" class="text-center mt-4" style="display: none;">
+            <div class="alert alert-success">
+                Questions generated successfully!
+            </div>
+            <button id="startTestBtn" class="btn btn-success" onclick="startTest(event)">
+                Start Test
+            </button>
+        </div>
+
+        <!-- Question Progress -->
+        <div class="progress-circles">
+            {% for i in range(10) %}
+            <div class="progress-circle" id="circle-{{ i + 1 }}">{{ i + 1 }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- Question Container -->
+        <div id="questionContainer" style="display: none;">
+            <div class="question-progress">
+                <div class="question-number">Question <span id="currentQuestionNumber">1</span> of 10</div>
+                <div class="question-timer" id="questionTimer">Time: 0s</div>
+            </div>
+            
+            <div class="question-card">
+                <h3 id="questionText" class="mb-4"></h3>
+                <form id="answerForm">
+                    <div id="optionsContainer"></div>
+                    <div class="time-bonus" id="timeBonus"></div>
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary">Submit Answer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Results Container -->
+        <div id="resultsContainer" class="mt-4">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">Test Results</h3>
+                    
+                    <!-- Performance Summary -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Performance Summary</h5>
+                                    <p>Total Questions: <span id="totalQuestions"></span></p>
+                                    <p>Questions Answered: <span id="questionsAnswered"></span></p>
+                                    <p>Correct Answers: <span id="correctAnswers"></span></p>
+                                    <p>Accuracy: <span id="accuracy"></span>%</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Time Taken</h5>
+                                    <p>Start Time: <span id="startTime"></span></p>
+                                    <p>End Time: <span id="endTime"></span></p>
+                                    <p>Duration: <span id="duration"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recommendations -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Recommendations</h5>
+                            <ul id="recommendations" class="list-group">
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Restart Test Button -->
+                    <div class="text-center">
+                        <button class="btn btn-primary" onclick="restartTest()">Start New Test</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let timer;
+        let seconds = 0;
+        let startTime;
+        let questionStartTime;
+        let questionTimer;
+        let currentQuestionId;
+
+        function showError(message) {
+            const flashMessages = document.getElementById('flash-messages');
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-danger alert-dismissible fade show';
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            flashMessages.appendChild(alert);
+        }
+
+        function formatTime(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleString();
+        }
+
+        function formatDuration(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        function showResults(data) {
+            document.getElementById('questionContainer').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'block';
+            
+            // Update performance summary
+            document.getElementById('totalQuestions').textContent = data.results.total_questions;
+            document.getElementById('questionsAnswered').textContent = data.results.questions_answered;
+            document.getElementById('correctAnswers').textContent = data.results.correct_answers;
+            document.getElementById('accuracy').textContent = (data.results.accuracy * 100).toFixed(2);
+            
+            // Update time information
+            document.getElementById('startTime').textContent = formatTime(data.results.start_time);
+            document.getElementById('endTime').textContent = formatTime(data.results.end_time);
+            document.getElementById('duration').textContent = formatDuration(seconds);
+            
+            // Update recommendations
+            const recommendationsList = document.getElementById('recommendations');
+            recommendationsList.innerHTML = '';
+            data.recommendations.forEach(recommendation => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.textContent = recommendation;
+                recommendationsList.appendChild(li);
+            });
+        }
+
+        function restartTest() {
+            document.getElementById('resultsContainer').style.display = 'none';
+            document.getElementById('generateSection').style.display = 'block';
+            document.getElementById('generateBtn').disabled = false;
+            seconds = 0;
+            document.getElementById('timer').textContent = 'Time: 00:00';
+        }
+
+        function startTimer() {
+            startTime = new Date();
+        }
+
+        function getTimeSpent() {
+            const endTime = new Date();
+            return Math.round((endTime - startTime) / 1000); // Convert to seconds
+        }
+
+        function startQuestionTimer() {
+            questionStartTime = new Date();
+            let seconds = 0;
+            questionTimer = setInterval(() => {
+                seconds++;
+                document.getElementById('questionTimer').textContent = `Time: ${seconds}s`;
+                updateTimeBonus(seconds);
+            }, 1000);
+        }
+
+        function stopQuestionTimer() {
+            clearInterval(questionTimer);
+            const timeTaken = Math.floor((new Date() - questionStartTime) / 1000);
+            return timeTaken;
+        }
+
+        function updateTimeBonus(seconds) {
+            const bonusElement = document.getElementById('timeBonus');
+            if (seconds <= 10) {
+                bonusElement.textContent = 'Time Bonus: +3 points (Fast answer!)';
+                bonusElement.style.color = '#4CAF50';
+            } else if (seconds <= 20) {
+                bonusElement.textContent = 'Time Bonus: +1 point';
+                bonusElement.style.color = '#FFA726';
+            } else {
+                bonusElement.textContent = 'No time bonus available';
+                bonusElement.style.color = '#F44336';
+            }
+        }
+
+        function updateProgressCircles(questionNumber, isCorrect) {
+            const circles = document.querySelectorAll('.progress-circle');
+            circles.forEach((circle, index) => {
+                if (index + 1 < questionNumber) {
+                    circle.classList.add('completed');
+                } else if (index + 1 === questionNumber) {
+                    circle.classList.add('active');
+                }
+            });
+        }
+
+        function generateQuestions(event) {
+            event.preventDefault();
+            document.getElementById('generateBtn').disabled = true;
+            document.querySelector('.loading').style.display = 'block';
+            
+            fetch('/api/test/generate-questions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.querySelector('.loading').style.display = 'none';
+                if (data.success) {
+                    document.getElementById('successSection').style.display = 'block';
+                } else {
+                    document.getElementById('generateBtn').disabled = false;
+                    showError(data.message || 'Failed to generate questions');
+                }
+            })
+            .catch(error => {
+                document.querySelector('.loading').style.display = 'none';
+                document.getElementById('generateBtn').disabled = false;
+                console.error('Error:', error);
+                showError('An error occurred while generating questions');
+            });
+        }
+
+        function startTest(event) {
+            event.preventDefault();
+            fetch('/api/test/initialize', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('successSection').style.display = 'none';
+                    document.getElementById('questionContainer').style.display = 'block';
+                    startTime = new Date();
+                    startTimer();
+                    loadNextQuestion();
+                } else {
+                    showError(data.message || 'Failed to start test');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('An error occurred while starting the test');
+            });
+        }
+
+        async function loadNextQuestion() {
+            try {
+                const response = await fetch('/api/questions/next');
+                const data = await response.json();
+                
+                if (data.error) {
+                    console.error('Error loading next question:', data.error);
+                    return;
+                }
+
+                if (data.completed) {
+                    window.location.href = '/dashboard';
+                    return;
+                }
+
+                // Update question display
+                document.getElementById('questionText').textContent = data.content;
+                const optionsContainer = document.getElementById('optionsContainer');
+                optionsContainer.innerHTML = '';
+                
+                data.options.forEach((option, index) => {
+                    const optionLabel = document.createElement('label');
+                    optionLabel.className = 'option-btn';
+                    
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = 'answer';
+                    radio.value = String.fromCharCode(65 + index);
+                    radio.className = 'me-2';
+                    
+                    const optionLetter = document.createElement('span');
+                    optionLetter.className = 'option-letter';
+                    optionLetter.textContent = String.fromCharCode(65 + index) + '. ';
+                    
+                    optionLabel.appendChild(radio);
+                    optionLabel.appendChild(optionLetter);
+                    optionLabel.appendChild(document.createTextNode(option));
+                    optionsContainer.appendChild(optionLabel);
+                });
+                
+                // Start timer for this question
+                startQuestionTimer();
+
+                currentQuestionId = data.id;
+            } catch (error) {
+                console.error('Error:', error);
+                showError('An error occurred while loading the question');
+            }
+        }
+
+        function updateProgress(questionsAnswered) {
+            const progress = (questionsAnswered / 10) * 100;
+            const progressBar = document.querySelector('.progress-bar');
+            progressBar.style.width = progress + '%';
+            progressBar.textContent = `${Math.round(progress)}% (${questionsAnswered}/10)`;
+            progressBar.setAttribute('aria-valuenow', progress);
+        }
+
+        document.getElementById('answerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+            
+            if (!selectedAnswer) {
+                showError('Please select an answer');
+                return;
+            }
+            
+            const timeTaken = stopQuestionTimer();
+            let timeBonus = 0;
+            if (timeTaken <= 10) {
+                timeBonus = 3;
+            } else if (timeTaken <= 20) {
+                timeBonus = 1;
+            }
+            
+            submitAnswer(selectedAnswer.value);
+        });
+
+        async function submitAnswer(answer) {
+            const timeSpent = getTimeSpent();
+            
+            try {
+                const response = await fetch('/api/questions/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        answer: answer,
+                        question_id: currentQuestionId,
+                        time_spent: timeSpent
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    console.error('Error submitting answer:', data.error);
+                    return;
+                }
+
+                // Load next question or show results
+                loadNextQuestion();
+                
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Start the test when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadNextQuestion();
+        });
+    </script>
+</body>
+</html>
+{% endblock %} 

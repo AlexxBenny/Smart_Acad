@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generate Question Paper</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
+    <style>
+        /* Gaming-inspired theme with vibrant colors */
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #00b894;
+            --accent-color: #fd79a8;
+            --warning-color: #fdcb6e;
+            --danger-color: #e84393;
+            --dark-bg: #2d3436;
+            --light-bg: #ddd;
+            --card-bg: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        * {
+            font-family: 'Raleway', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--gradient-1);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .select-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Gaming-style buttons */
+        .btn-action {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-action:active {
+            transform: translateY(0);
+        }
+
+        .btn-action i {
+            margin-right: 10px;
+        }
+
+        /* Different colors for each button */
+        .btn-action[value="create"] {
+            background: var(--gradient-2);
+        }
+
+        .btn-action[value="reuse"] {
+            background: var(--gradient-4);
+        }
+
+        /* Alert messages */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border-left: 4px solid;
+            color: var(--text-primary);
+        }
+
+        .alert-error {
+            background: rgba(232, 67, 147, 0.1);
+            border-left-color: var(--danger-color);
+        }
+
+        .alert-success {
+            background: rgba(0, 184, 148, 0.1);
+            border-left-color: var(--secondary-color);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .select-container {
+                padding: 30px 20px;
+            margin: 20px;
+            width: auto;
+            min-width: 300px;
+            max-width: 100%;
+            box-sizing: border-box;
+            transform: none;
+            left: 0;
+                }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .btn-action {
+                padding: 15px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Animation for buttons */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .btn-action:hover {
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="select-container">
+        <h1><i class="fas fa-file-pdf"></i> Generate Question Paper</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i> {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST">
+            <input type="hidden" name="step" value="select_template">
+            <button type="submit" name="action" value="create" class="btn-action">
+                <i class="fas fa-plus"></i> Create New Template
+            </button>
+            <button type="submit" name="action" value="reuse" class="btn-action">
+                <i class="fas fa-copy"></i> Reuse Saved Template
+            </button>
+        </form>
+    </div>
+</body>
+</html>

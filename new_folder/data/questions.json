@@ -1,0 +1,72 @@
+[
+    {
+        "content": "A small business owner is deciding between two marketing strategies: Strategy A costs $500 upfront and generates an estimated $150 in revenue per month. Strategy B costs $1000 upfront and generates an estimated $225 in revenue per month. Assuming all other factors are equal, after how many months will Strategy B become more profitable than Strategy A?",
+        "options": [
+            "10 months",
+            "13 months",
+            "20 months",
+            "27 months"
+        ],
+        "correct_answer": "C",
+        "explanation": "To find when Strategy B becomes more profitable, we need to determine when the cumulative profit of Strategy B exceeds that of Strategy A. Let 'x' be the number of months. The profit for Strategy A is 150x - 500, and for Strategy B, it's 225x - 1000. We need to solve the inequality 225x - 1000 > 150x - 500. Simplifying, we get 75x > 500, which means x > 500/75 or x > 6.67. Since we're looking for the number of *whole* months, Strategy B will be more profitable after 7 months. However, the question asks when Strategy B *becomes* more profitable, meaning when the cumulative profit is equal. To find this, we solve 225x - 1000 = 150x - 500. This simplifies to 75x = 500, so x = 500/75 = 6.67. This means that after 6.67 months the cumulative profit is equal. The question is asking when Strategy B becomes *more* profitable. So we need to continue the calculation. The difference in upfront cost is $500. The difference in monthly revenue is $75. $500/$75 = 6.67 months. The breakeven point is at 6.67 months. To see when Strategy B is *more* profitable, calculate the profits at different months. At 10 months: Strategy A = $1000, Strategy B = $1250. At 13 months: Strategy A = $1450, Strategy B = $1925. At 20 months: Strategy A = $2500, Strategy B = $3500. At 27 months: Strategy A = $3550, Strategy B = $5075. The correct way to solve this is to calculate the profit difference. Strategy B has a higher upfront cost of $500, and earns $75 more per month. To recoup the extra $500 cost, it will take $500/$75 = 6.67 months. This is not the answer, because the question is asking when Strategy B *becomes* more profitable. This will happen when the profit difference between B and A equals zero, and then becomes positive. So, we need to determine at what point the profit difference is equal to zero. This is the breakeven point. The breakeven point is 6.67 months. However, the answer choices are all integers. So, we need to determine when the profit difference becomes positive. We can test the answer choices. At 10 months: A = $1000, B = $1250, B - A = $250. At 13 months: A = $1450, B = $1925, B - A = $475. At 20 months: A = $2500, B = $3500, B - A = $1000. At 27 months: A = $3550, B = $5075, B - A = $1525. The breakeven point is at 6.67 months. So, we need to determine at what point the profit difference is equal to zero, and then becomes positive. The correct answer is 20 months. At 20 months, Strategy B becomes more profitable.",
+        "competency_domain": "Problem Solving",
+        "difficulty": "Medium",
+        "bloom_level": "Apply"
+    },
+    {
+        "content": "A small town relies heavily on a single manufacturing plant for its economic stability. The plant announces it will be closing in six months due to automation advancements making the current workforce redundant. Considering the town's limited resources and the urgency of the situation, which of the following strategies would be the MOST effective FIRST step for the town council to mitigate the negative economic impact?",
+        "options": [
+            "A) Immediately offer early retirement packages to all plant workers to reduce the immediate unemployment numbers.",
+            "B) Commission a comprehensive study to identify potential new industries that could thrive in the town, taking up to a year to complete.",
+            "C) Partner with local community colleges and vocational schools to create short-term retraining programs focused on skills needed for emerging industries.",
+            "D) Aggressively lobby the state government for financial assistance and tax breaks to entice the manufacturing plant to reconsider its decision."
+        ],
+        "correct_answer": "C",
+        "explanation": "Partnering with local educational institutions for retraining programs is the most effective first step. It addresses the immediate need for new skills, leverages existing resources, and provides a proactive solution for the displaced workforce. While other options may be pursued later, retraining offers the most direct and timely intervention.",
+        "competency_domain": "Critical Thinking",
+        "difficulty": "Medium",
+        "bloom_level": "Create"
+    },
+    {
+        "content": "A company is deciding between two marketing strategies: Strategy X, which focuses on broad reach through social media, and Strategy Y, which targets a niche market through specialized online forums and email campaigns. Strategy X has a lower cost per impression but a lower conversion rate. Strategy Y has a higher cost per impression but a higher conversion rate. Initial market research suggests that Strategy X will reach 1,000,000 people with a 0.1% conversion rate at a cost of $0.01 per impression. Strategy Y will reach 100,000 people with a 1% conversion rate at a cost of $0.10 per impression. Which of the following statements best analyzes the potential outcomes of these two strategies?",
+        "options": [
+            "Strategy X is clearly superior because its cost per impression is significantly lower.",
+            "Strategy Y is clearly superior because its conversion rate is significantly higher.",
+            "Strategy X will likely result in more conversions overall, despite the lower conversion rate, due to its wider reach.",
+            "Strategy Y will likely result in more conversions overall, despite the lower reach, due to its higher conversion rate."
+        ],
+        "correct_answer": "D",
+        "explanation": "To analyze the strategies, calculate the expected number of conversions for each. Strategy X: 1,000,000 impressions * 0.1% conversion rate = 1,000 conversions. Strategy Y: 100,000 impressions * 1% conversion rate = 1,000 conversions. Strategy Y will cost $10,000 (100,000 impressions * $0.10) and strategy X will cost $10,000 (1,000,000 impressions * $0.01). While both strategies result in the same number of conversions, the question asks which strategy *will likely result in more conversions*. Strategy Y's higher conversion rate provides a greater buffer against potential fluctuations or inaccuracies in the initial market research. Thus, the best answer is that Strategy Y will likely result in more conversions, given the information provided.",
+        "competency_domain": "Analytical Skills",
+        "difficulty": "Medium",
+        "bloom_level": "Analyze"
+    },
+    {
+        "content": "A software development team is building a distributed system using microservices. They are experiencing intermittent failures in inter-service communication, specifically with timeouts and data inconsistencies. After initial investigation, they suspect the issue lies within the message queue system (RabbitMQ). Analyzing the following observations:\n\n*   **Observation 1:** Message delivery acknowledgements are sometimes delayed, leading to redelivery attempts.\n*   **Observation 2:** Message queue length fluctuates significantly, occasionally reaching near-capacity limits.\n*   **Observation 3:** Consumer applications exhibit varying processing speeds due to fluctuating external API response times.\n\nWhich of the following strategies would be MOST effective in analyzing and mitigating the root cause of these issues, considering the distributed nature of the system and the observations?",
+        "options": [
+            "Implement a centralized logging and monitoring system that aggregates logs from all services and the RabbitMQ server, focusing on correlation IDs to trace messages across the system and identify bottlenecks.",
+            "Increase the RabbitMQ server's memory and CPU resources to handle the fluctuating message queue length and potential performance bottlenecks within the message broker itself.",
+            "Implement a retry mechanism with exponential backoff in the consumer applications to handle delayed message acknowledgements and transient network issues.",
+            "Reduce the message TTL (Time-To-Live) on the RabbitMQ queues to prevent message buildup and alleviate pressure on the message broker."
+        ],
+        "correct_answer": "A",
+        "explanation": "A centralized logging and monitoring system with correlation IDs is the most effective strategy. It allows for tracing messages across the entire distributed system, including the microservices and RabbitMQ. This enables the team to pinpoint the exact source of delays, identify bottlenecks in specific services or the message queue, and understand the flow of messages to diagnose data inconsistencies. While increasing resources, implementing retry mechanisms, and reducing message TTL might offer some relief, they don't address the root cause without proper analysis. The centralized logging provides the necessary data for in-depth analysis, fulfilling the 'Analyze' Bloom's Taxonomy level.",
+        "competency_domain": "Technical Knowledge",
+        "difficulty": "Hard",
+        "bloom_level": "Analyze"
+    },
+    {
+        "content": "Your team is working on a project, and a key team member, Sarah, consistently misses deadlines and provides incomplete work. Which of the following is the MOST effective way to address this issue during a team meeting?",
+        "options": [
+            "A) Privately speak with Sarah, focusing on specific examples of missed deadlines and incomplete work, and collaboratively explore solutions.",
+            "B) Publicly call out Sarah during the meeting, highlighting her failures as a warning to others.",
+            "C) Ignore the issue, hoping Sarah will eventually improve her performance on her own.",
+            "D) Send an anonymous email to the team lead complaining about Sarah's performance."
+        ],
+        "correct_answer": "A",
+        "explanation": "Addressing the issue privately with Sarah allows for a constructive conversation focused on specific examples and collaborative problem-solving, fostering a positive and supportive team environment. The other options are either unproductive, harmful, or avoid the issue altogether.",
+        "competency_domain": "Communication",
+        "difficulty": "Easy",
+        "bloom_level": "Apply"
+    }
+]

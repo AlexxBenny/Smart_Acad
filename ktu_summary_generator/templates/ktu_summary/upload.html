@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generate Study Summary</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Raleway', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(90deg, #C7C5F4, #776BCC);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .upload-container {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0px 0px 24px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #D4D3E8;
+        }
+
+        .custom-file {
+            position: relative;
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .custom-file-input {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: calc(2.25rem + 2px);
+            margin: 0;
+            opacity: 0;
+        }
+
+        .custom-file-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 1;
+            height: calc(2.25rem + 2px);
+            padding: 0.375rem 0.75rem;
+            font-weight: 600;
+            line-height: 1.5;
+            color: #5D54A4;
+            background-color: rgba(255,255,255,0.9);
+            border-radius: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .custom-file-label::after {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 3;
+            display: block;
+            height: calc(2.25rem + 2px);
+            padding: 0.375rem 0.75rem;
+            line-height: 1.5;
+            color: #5D54A4;
+            content: "Browse";
+            background-color: rgba(255,255,255,0.7);
+            border-left: 1px solid #D4D3E8;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #fff;
+            color: #5D54A4;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn-primary:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: white;
+            border: 1px solid #D4D3E8;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+
+        .alert-error {
+            background: rgba(231, 76, 60, 0.2);
+            color: #f5b7b1;
+            border-left: 4px solid #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="upload-container">
+        <h1><i class="fas fa-file-alt"></i> Upload {{ pdf_count }} PDF{{ 's' if pdf_count > 1 }}</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i> {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST" enctype="multipart/form-data">
+            {% for i in range(pdf_count) %}
+            <div class="form-group">
+                <label for="pdf_{{i}}">PDF {{i+1}}:</label>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="pdf_{{i}}" name="pdfs" accept=".pdf" required>
+                    <label class="custom-file-label" for="pdf_{{i}}">Choose file...</label>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-magic"></i> Generate Summary
+            </button>
+            
+            <a href="{{ url_for('ktu_summary.summary') }}" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Change Number of PDFs
+            </a>
+        </form>
+    </div>
+
+    <script>
+        // Update file input labels
+        document.querySelectorAll('.custom-file-input').forEach(input => {
+            input.addEventListener('change', function() {
+                const label = this.nextElementSibling;
+                label.textContent = this.files[0]?.name || 'Choose file...';
+            });
+        });
+    </script>
+</body>
+</html>

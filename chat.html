@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Academic Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Raleway', sans-serif;
+            box-sizing: border-box;
+        }
+
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            z-index: 1000;
+        }
+
+        .chat-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(90deg, #5D54A4, #7C78B8);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0px 0px 24px #5C5696;
+            z-index: 1001;
+            transition: all 0.3s ease;
+            border: 1px solid #D4D3E8;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0px 4px 12px #5C5696;
+        }
+
+        .chat-button i {
+            font-size: 24px;
+        }
+
+        .chat-window {
+            display: none;
+            background: linear-gradient(135deg, #5D54A4, #7C78B8);
+            border-radius: 15px;
+            box-shadow: 0px 0px 24px #5C5696;
+            flex-direction: column;
+            height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-window::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            height: 200px;
+            width: 200px;
+            background: rgba(255,255,255,0.1);
+            transform: rotate(45deg);
+            border-radius: 0 72px 0 0;
+            z-index: 0;
+        }
+
+        .chat-header {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 15px;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(5px);
+        }
+
+        .chat-header span {
+            font-weight: 700;
+        }
+
+        .chat-header button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            transition: transform 0.2s ease;
+        }
+
+        .chat-header button:hover {
+            transform: rotate(90deg);
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: rgba(255,255,255,0.05);
+            position: relative;
+            z-index: 1;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background: rgba(255,255,255,0.9);
+            color: #5D54A4;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+            box-shadow: 0px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .bot-message {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+            backdrop-filter: blur(5px);
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(5px);
+        }
+
+        .chat-input input {
+            flex-grow: 1;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 26px;
+            outline: none;
+            color: #5D54A4;
+            font-weight: 600;
+            box-shadow: 0px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .chat-input button {
+            margin-left: 10px;
+            padding: 12px 15px;
+            background: #fff;
+            color: #5D54A4;
+            border: none;
+            border-radius: 26px;
+            cursor: pointer;
+            font-weight: 700;
+            box-shadow: 0px 2px 2px #5C5696;
+            border: 1px solid #D4D3E8;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-input button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0px 4px 6px #5C5696;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border-radius: 18px;
+            margin-bottom: 15px;
+            width: fit-content;
+            backdrop-filter: blur(5px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .typing-indicator span {
+            display: flex;
+            align-items: center;
+        }
+
+        .typing-indicator span::after {
+            content: '...';
+            display: inline-block;
+            width: 20px;
+            animation: ellipsis 1.5s infinite;
+        }
+
+        @keyframes ellipsis {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+        }
+
+        /* Scrollbar styling */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.4);
+        }
+
+        @media (max-width: 400px) {
+            .chat-container {
+                width: 100%;
+                right: 0;
+                bottom: 0;
+            }
+            
+            .chat-window {
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            .chat-button {
+                right: 15px;
+                bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <span><i class="fas fa-robot"></i> AI Academic Assistant</span>
+                <button id="closeChat">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="typing-indicator" id="typingIndicator">
+                    <span>AI is typing</span>
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="userInput" placeholder="Ask me anything..." autocomplete="off">
+                <button id="sendButton"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="chat-button" id="chatButton">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <script>
+        const chatButton = document.getElementById('chatButton');
+        const chatWindow = document.getElementById('chatWindow');
+        const closeChat = document.getElementById('closeChat');
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        let chatHistory = [];
+
+        // Toggle chat window
+        chatButton.addEventListener('click', () => {
+            chatWindow.style.display = 'flex';
+            userInput.focus();
+        });
+
+        closeChat.addEventListener('click', () => {
+            chatWindow.style.display = 'none';
+        });
+
+        // Send message function
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message === '') return;
+
+            // Add user message to chat
+            addMessage(message, 'user');
+            userInput.value = '';
+            
+            // Show typing indicator
+            typingIndicator.style.display = 'flex';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Send to server
+            fetch('/chat/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    message: message,
+                    history: chatHistory
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                typingIndicator.style.display = 'none';
+                if (data.response) {
+                    addMessage(data.response, 'bot');
+                    chatHistory.push({ role: 'user', content: message });
+                    chatHistory.push({ role: 'assistant', content: data.response });
+                } else if (data.error) {
+                    addMessage(`Error: ${data.error}`, 'bot');
+                }
+            })
+            .catch(error => {
+                typingIndicator.style.display = 'none';
+                addMessage(`Error: Could not connect to the AI assistant. Please try again later.`, 'bot');
+                console.error('Error:', error);
+            });
+        }
+
+        // Add message to chat
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+            
+            // Format links if present in bot messages
+            if (sender === 'bot' && text.includes('http')) {
+                const parts = text.split(/(https?:\/\/[^\s]+)/g);
+                let formattedText = '';
+                
+                parts.forEach(part => {
+                    if (part.startsWith('http')) {
+                        formattedText += `<a href="${part}" target="_blank" style="color: ${sender === 'bot' ? '#a3e4a3' : '#5D54A4'}; text-decoration: underline;">${part}</a>`;
+                    } else {
+                        formattedText += part;
+                    }
+                });
+                
+                messageDiv.innerHTML = formattedText;
+            } else {
+                messageDiv.textContent = text;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Send message on button click or Enter key
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Initial greeting
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                addMessage("Hello! I'm your AI Academic Assistant. I can help with:\n\n• Course information\n• Attendance queries\n• Grade explanations\n• Study tips\n\nHow can I assist you today?", 'bot');
+            }, 500);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Custom Template</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
+    <style>
+        /* Gaming-inspired theme with vibrant colors */
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #00b894;
+            --accent-color: #fd79a8;
+            --warning-color: #fdcb6e;
+            --danger-color: #e84393;
+            --dark-bg: #2d3436;
+            --light-bg: #ddd;
+            --card-bg: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        * {
+            font-family: 'Raleway', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--gradient-1);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(108, 92, 231, 0.05);
+            border: 2px solid rgba(108, 92, 231, 0.2);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+
+        /* Section styling */
+        .section {
+            background: rgba(108, 92, 231, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* Button styles */
+        .remove-section {
+            background: rgba(232, 67, 147, 0.1);
+            color: var(--danger-color);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .remove-section:hover {
+            background: var(--danger-color);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .add-section {
+            background: var(--gradient-4);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 700;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .add-section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            margin-top: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Alert messages */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border-left: 4px solid;
+            color: var(--text-primary);
+        }
+
+        .alert-error {
+            background: rgba(232, 67, 147, 0.1);
+            border-left-color: var(--danger-color);
+        }
+
+        .alert-success {
+            background: rgba(0, 184, 148, 0.1);
+            border-left-color: var(--secondary-color);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .btn-primary, .add-section {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Animation for buttons */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .add-section:hover, .btn-primary:hover {
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-file-alt"></i> Create Custom Template</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i> {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST" id="templateForm">
+            <input type="hidden" name="step" value="create_template">
+            
+            <div class="form-group">
+                <label for="template_name">Template Name:</label>
+                <input type="text" id="template_name" name="template_name" required placeholder="e.g., Advanced Programming Template">
+            </div>
+            
+            <div class="form-group">
+                <label for="institution">Institution:</label>
+                <input type="text" id="institution" name="institution" required placeholder="e.g., ABC University">
+            </div>
+            
+            <div class="form-group">
+                <label for="course">Course:</label>
+                <input type="text" id="course" name="course" required placeholder="e.g., B.Tech Computer Science">
+            </div>
+            
+            <div class="form-group">
+                <label for="subject">Subject:</label>
+                <input type="text" id="subject" name="subject" required placeholder="e.g., Advanced Programming">
+            </div>
+            
+            <div class="form-group">
+                <label for="total_marks">Total Marks:</label>
+                <input type="number" id="total_marks" name="total_marks" required min="1" value="100">
+            </div>
+            
+            <div class="form-group">
+                <label for="duration_minutes">Duration (minutes):</label>
+                <input type="number" id="duration_minutes" name="duration_minutes" required min="1" value="180">
+            </div>
+            
+            <h2 style="color: var(--primary-color); margin-top: 30px; border-bottom: 2px solid rgba(108, 92, 231, 0.2); padding-bottom: 10px;">
+                <i class="fas fa-th-list"></i> Sections
+            </h2>
+            <div id="sections">
+                <!-- Sections will be added here dynamically -->
+            </div>
+            
+            <button type="button" class="add-section" onclick="addSection()">
+                <i class="fas fa-plus"></i> Add Section
+            </button>
+            
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-save"></i> Save Template
+            </button>
+        </form>
+    </div>
+
+    <script>
+        let sectionCount = 0;
+        
+        function addSection() {
+            const sectionsDiv = document.getElementById('sections');
+            const sectionDiv = document.createElement('div');
+            sectionDiv.className = 'section';
+            sectionDiv.innerHTML = `
+                <div class="section-header">
+                    <div class="section-title">Section ${sectionCount + 1}</div>
+                    <button type="button" class="remove-section" onclick="this.parentElement.parentElement.remove(); sectionCount--;">
+                        <i class="fas fa-times"></i> Remove
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label>Section Name:</label>
+                    <input type="text" name="section_name[]" placeholder="Section Name (e.g., PART A)" required>
+                </div>
+                <div class="form-group">
+                    <label>Question Type:</label>
+                    <select name="section_type[]" required>
+                        <option value="short_answer">Short Answer</option>
+                        <option value="long_answer">Long Answer</option>
+                        <option value="multiple_choice">Multiple Choice</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Number of Questions:</label>
+                    <input type="number" name="section_questions[]" placeholder="Number of Questions" required min="1">
+                </div>
+                <div class="form-group">
+                    <label>Marks per Question:</label>
+                    <input type="number" name="section_marks[]" placeholder="Marks per Question" required min="1">
+                </div>
+            `;
+            sectionsDiv.appendChild(sectionDiv);
+            sectionCount++;
+        }
+        
+        // Add first section by default
+        document.addEventListener('DOMContentLoaded', addSection);
+        
+        // Form validation
+        document.getElementById('templateForm').onsubmit = function(e) {
+            if (sectionCount === 0) {
+                e.preventDefault();
+                alert('Please add at least one section');
+                return false;
+            }
+            return true;
+        };
+    </script>
+</body>
+</html>

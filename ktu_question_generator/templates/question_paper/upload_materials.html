@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Study Materials - Academic Portal</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            
+            --primary-color: #667eea;
+            --secondary-color: #4facfe;
+            --success-color: #43e97b;
+            --warning-color: #fa709a;
+            --danger-color: #ff6b6b;
+            
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --text-muted: #b2bec3;
+            
+            --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
+            --border-light: #e9ecef;
+            --border-primary: rgba(102, 126, 234, 0.2);
+            
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.15);
+            --shadow-lg: 0 8px 25px rgba(0,0,0,0.15);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        * {
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            padding: 2rem 0;
+            color: var(--text-primary);
+        }
+
+        /* Main Container */
+        .upload-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            border-radius: 24px;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Header Section */
+        .upload-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .upload-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .upload-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .upload-header .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        /* Content Section */
+        .upload-content {
+            padding: 2.5rem;
+        }
+
+        /* Step Indicator */
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-light);
+            border-radius: 50px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border: 2px solid var(--border-light);
+        }
+
+        .step.active {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .step i {
+            margin-right: 0.5rem;
+        }
+
+        /* Upload Areas */
+        .upload-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 0.75rem;
+            color: var(--primary-color);
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-primary);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.02) 0%, rgba(118, 75, 162, 0.02) 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .upload-area:hover::before {
+            left: 100%;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--success-color);
+            background: linear-gradient(135deg, rgba(67, 233, 123, 0.1) 0%, rgba(56, 249, 215, 0.1) 100%);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .upload-area input[type="file"] {
+            display: none;
+        }
+
+        /* File List */
+        .file-list {
+            margin-top: 1.5rem;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            background: var(--bg-light);
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+            animation: slideInUp 0.3s ease;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .file-item:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transform: translateX(4px);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .file-icon {
+            font-size: 1.5rem;
+            color: var(--danger-color);
+            margin-right: 1rem;
+        }
+
+        .file-details h6 {
+            margin: 0;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .file-details small {
+            color: var(--text-secondary);
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-remove {
+            background: rgba(255, 107, 107, 0.1);
+            color: var(--danger-color);
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-remove:hover {
+            background: var(--danger-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Past Papers Section */
+        .past-papers-toggle {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(79, 172, 254, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(79, 172, 254, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .past-papers-toggle:hover {
+            background: rgba(79, 172, 254, 0.1);
+        }
+
+        .past-papers-toggle input[type="checkbox"] {
+            margin-right: 1rem;
+            transform: scale(1.3);
+            accent-color: var(--secondary-color);
+        }
+
+        .past-papers-toggle label {
+            margin: 0;
+            font-weight: 600;
+            color: var(--secondary-color);
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .past-papers-section {
+            background: rgba(79, 172, 254, 0.02);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(79, 172, 254, 0.1);
+            margin-top: 1rem;
+        }
+
+        .past-papers-counter {
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            padding: 0.5rem;
+            background: rgba(79, 172, 254, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Difficulty Sliders */
+        .difficulty-section {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.02) 0%, rgba(118, 75, 162, 0.02) 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border-primary);
+            margin-bottom: 2rem;
+        }
+
+        .difficulty-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .difficulty-item {
+            background: var(--bg-white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+        }
+
+        .difficulty-item:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .difficulty-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .difficulty-name {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .difficulty-name i {
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .difficulty-name.easy i { color: var(--success-color); }
+        .difficulty-name.medium i { color: var(--warning-color); }
+        .difficulty-name.hard i { color: var(--danger-color); }
+
+        .difficulty-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .difficulty-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--bg-light);
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        .difficulty-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .difficulty-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: var(--shadow-md);
+        }
+
+        .difficulty-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            cursor: pointer;
+            border: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Total Percentage Display */
+        .total-display {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-white);
+            border-radius: 12px;
+            border: 2px solid var(--border-light);
+            transition: all 0.3s ease;
+        }
+
+        .total-display.valid {
+            border-color: var(--success-color);
+            background: rgba(67, 233, 123, 0.05);
+        }
+
+        .total-display.invalid {
+            border-color: var(--danger-color);
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .total-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .total-text.valid { color: var(--success-color); }
+        .total-text.invalid { color: var(--danger-color); }
+
+        /* Generate Button */
+        .generate-section {
+            text-align: center;
+            padding-top: 1rem;
+        }
+
+        .btn-generate {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-md);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-generate::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-generate:hover::before {
+            left: 100%;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-generate:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-generate:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-generate i {
+            margin-right: 0.75rem;
+        }
+
+        /* Alert Messages */
+        .alert-custom {
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: none;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .alert-custom i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        .alert-success {
+            background: rgba(67, 233, 123, 0.1);
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
+        }
+
+        .alert-error {
+            background: rgba(255, 107, 107, 0.1);
+            color: var(--danger-color);
+            border-left: 4px solid var(--danger-color);
+        }
+
+        /* Loading State */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-light);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .upload-container {
+                border-radius: 16px;
+            }
+
+            .upload-header {
+                padding: 2rem 1.5rem;
+            }
+
+            .upload-header h1 {
+                font-size: 2rem;
+            }
+
+            .upload-content {
+                padding: 1.5rem;
+            }
+
+            .upload-area {
+                padding: 2rem 1rem;
+            }
+
+            .difficulty-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .btn-generate {
+                padding: 0.875rem 2rem;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .upload-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .file-actions {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h5>Generating Question Paper...</h5>
+            <p class="text-muted">This may take a few moments</p>
+        </div>
+    </div>
+
+    <div class="upload-container">
+        <!-- Header -->
+        <div class="upload-header">
+            <div class="icon">
+                <i class="fas fa-file-upload"></i>
+            </div>
+            <h1>Upload Study Materials</h1>
+            <p>Upload your study materials and configure question generation settings</p>
+        </div>
+
+        <!-- Content -->
+        <div class="upload-content">
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step active">
+                    <i class="fas fa-upload"></i>
+                    Upload & Configure
+                </div>
+            </div>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert-custom alert-{{ 'success' if category == 'success' else 'error' }}">
+                            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                <input type="hidden" name="step" value="generate">
+                
+                <!-- Study Materials Upload -->
+                <div class="upload-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-book"></i>
+                        Study Materials
+                    </h3>
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <div class="upload-text">Click to select files or drag and drop</div>
+                        <div class="upload-subtext">Upload PDF files containing your study materials</div>
+                        <input type="file" id="fileInput" name="pdfs" multiple accept=".pdf" required>
+                    </div>
+                    <div class="file-list" id="fileList"></div>
+                </div>
+
+                <!-- Past Papers Section -->
+                <div class="upload-section">
+                    <div class="past-papers-toggle" id="pastPapersToggle">
+                        <input type="checkbox" id="enablePastPapers">
+                        <label for="enablePastPapers">
+                            <i class="fas fa-history"></i>
+                            Include Past Question Papers (Optional)
+                        </label>
+                        <small class="text-muted">Helps improve question generation accuracy</small>
+                    </div>
+                    
+                    <div class="past-papers-section" id="pastPapersSection" style="display: none;">
+                        <div class="upload-area" id="pastPapersUploadArea">
+                            <i class="fas fa-file-alt upload-icon" style="color: var(--secondary-color);"></i>
+                            <div class="upload-text">Upload Past Question Papers</div>
+                            <div class="upload-subtext">Maximum 5 files to help improve question generation</div>
+                            <input type="file" id="pastPapersInput" name="past_papers" multiple accept=".pdf" max="5">
+                        </div>
+                        <div class="file-list" id="pastPapersList"></div>
+                        <div class="past-papers-counter" id="pastPapersCounter">
+                            0/5 past question papers uploaded
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Difficulty Distribution -->
+                <div class="difficulty-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-sliders-h"></i>
+                        Difficulty Distribution
+                    </h3>
+                    <p class="text-muted">Adjust the percentage of questions for each difficulty level (total must be 100%)</p>
+                    
+                    <div class="difficulty-grid">
+                        <div class="difficulty-item">
+                            <div class="difficulty-label">
+                                <div class="difficulty-name easy">
+                                    <i class="fas fa-smile"></i>
+                                    Easy Questions
+                                </div>
+                                <div class="difficulty-value" id="easyValue">30%</div>
+                            </div>
+                            <input type="range" class="difficulty-slider" name="easy_percentage" 
+                                   min="0" max="100" value="30" 
+                                   oninput="updateDifficulty(this, 'easyValue')" required>
+                        </div>
+                        
+                        <div class="difficulty-item">
+                            <div class="difficulty-label">
+                                <div class="difficulty-name medium">
+                                    <i class="fas fa-meh"></i>
+                                    Medium Questions
+                                </div>
+                                <div class="difficulty-value" id="mediumValue">40%</div>
+                            </div>
+                            <input type="range" class="difficulty-slider" name="medium_percentage" 
+                                   min="0" max="100" value="40" 
+                                   oninput="updateDifficulty(this, 'mediumValue')" required>
+                        </div>
+                        
+                        <div class="difficulty-item">
+                            <div class="difficulty-label">
+                                <div class="difficulty-name hard">
+                                    <i class="fas fa-frown"></i>
+                                    Hard Questions
+                                </div>
+                                <div class="difficulty-value" id="hardValue">30%</div>
+                            </div>
+                            <input type="range" class="difficulty-slider" name="hard_percentage" 
+                                   min="0" max="100" value="30" 
+                                   oninput="updateDifficulty(this, 'hardValue')" required>
+                        </div>
+                    </div>
+                    
+                    <div class="total-display valid" id="totalDisplay">
+                        <p class="total-text valid" id="totalText">Total: 100%</p>
+                    </div>
+                </div>
+
+                <!-- Hidden Fields -->
+                {% if not template_id %}
+                <input type="hidden" name="save_template" value="yes">
+                {% else %}
+                <input type="hidden" name="template_id" value="{{ template_id }}">
+                {% endif %}
+
+                <!-- Generate Button -->
+                <div class="generate-section">
+                    <button type="submit" class="btn-generate" id="generateBtn" disabled>
+                        <i class="fas fa-magic"></i>
+                        Generate Question Paper
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Global variables
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        const generateBtn = document.getElementById('generateBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        
+        // Past papers elements
+        const enablePastPapers = document.getElementById('enablePastPapers');
+        const pastPapersSection = document.getElementById('pastPapersSection');
+        const pastPapersUploadArea = document.getElementById('pastPapersUploadArea');
+        const pastPapersInput = document.getElementById('pastPapersInput');
+        const pastPapersList = document.getElementById('pastPapersList');
+        const pastPapersCounter = document.getElementById('pastPapersCounter');
+        
+        let selectedFiles = new Set();
+        let selectedPastPapers = new Set();
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateGenerateButton();
+            updateDifficultyTotal();
+        });
+
+        // Past papers toggle
+        enablePastPapers.addEventListener('change', function() {
+            if (this.checked) {
+                pastPapersSection.style.display = 'block';
+                pastPapersSection.style.animation = 'slideInUp 0.3s ease';
+            } else {
+                pastPapersSection.style.display = 'none';
+                selectedPastPapers.clear();
+                pastPapersList.innerHTML = '';
+                updatePastPapersCounter();
+            }
+        });
+
+        // Drag and drop for study materials
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', (e) => handleDrop(e, handleFiles));
+        uploadArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', () => handleFiles(Array.from(fileInput.files)));
+
+        // Drag and drop for past papers
+        pastPapersUploadArea.addEventListener('dragover', handleDragOver);
+        pastPapersUploadArea.addEventListener('dragleave', handleDragLeave);
+        pastPapersUploadArea.addEventListener('drop', (e) => handleDrop(e, handlePastPapers));
+        pastPapersUploadArea.addEventListener('click', () => pastPapersInput.click());
+        pastPapersInput.addEventListener('change', () => handlePastPapers(Array.from(pastPapersInput.files)));
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(e, handler) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files).filter(file => file.type === 'application/pdf');
+            handler(files);
+        }
+
+        function handleFiles(files) {
+            files.forEach(file => {
+                if (!selectedFiles.has(file.name)) {
+                    selectedFiles.add(file.name);
+                    addFileToList(file, fileList, 'var(--primary-color)', removeFile);
+                }
+            });
+            updateGenerateButton();
+        }
+
+        function handlePastPapers(files) {
+            files.forEach(file => {
+                if (selectedPastPapers.size < 5 && !selectedPastPapers.has(file.name)) {
+                    selectedPastPapers.add(file.name);
+                    addFileToList(file, pastPapersList, 'var(--secondary-color)', removePastPaper);
+                }
+            });
+            updatePastPapersCounter();
+        }
+
+        function addFileToList(file, container, borderColor, removeFunction) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.style.borderLeftColor = borderColor;
+            
+            const fileSize = (file.size / 1024 / 1024).toFixed(2);
+            
+            fileItem.innerHTML = `
+                <div class="file-info">
+                    <i class="fas fa-file-pdf file-icon"></i>
+                    <div class="file-details">
+                        <h6>${file.name}</h6>
+                        <small>${fileSize} MB</small>
+                    </div>
+                </div>
+                <div class="file-actions">
+                    <button type="button" class="btn-remove" onclick="${removeFunction.name}('${file.name}', this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(fileItem);
+        }
+
+        function removeFile(fileName, button) {
+            selectedFiles.delete(fileName);
+            button.closest('.file-item').remove();
+            updateGenerateButton();
+        }
+
+        function removePastPaper(fileName, button) {
+            selectedPastPapers.delete(fileName);
+            button.closest('.file-item').remove();
+            updatePastPapersCounter();
+        }
+
+        function updatePastPapersCounter() {
+            pastPapersCounter.textContent = `${selectedPastPapers.size}/5 past question papers uploaded`;
+        }
+
+        function updateGenerateButton() {
+            generateBtn.disabled = selectedFiles.size === 0;
+        }
+
+        function updateDifficulty(slider, valueId) {
+            const value = slider.value;
+            document.getElementById(valueId).textContent = value + '%';
+            updateDifficultyTotal();
+        }
+
+        function updateDifficultyTotal() {
+            const sliders = document.querySelectorAll('input[type="range"]');
+            const total = Array.from(sliders).reduce((sum, s) => sum + parseInt(s.value), 0);
+            
+            const totalDisplay = document.getElementById('totalDisplay');
+            const totalText = document.getElementById('totalText');
+            
+            totalText.textContent = `Total: ${total}%`;
+            
+            if (total === 100) {
+                totalDisplay.className = 'total-display valid';
+                totalText.className = 'total-text valid';
+            } else {
+                totalDisplay.className = 'total-display invalid';
+                totalText.className = 'total-text invalid';
+            }
+        }
+
+        // Form submission
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            const sliders = document.querySelectorAll('input[type="range"]');
+            const total = Array.from(sliders).reduce((sum, s) => sum + parseInt(s.value), 0);
+            
+            if (total !== 100) {
+                e.preventDefault();
+                alert('Difficulty distribution must total exactly 100%');
+                return false;
+            }
+            
+            if (selectedFiles.size === 0) {
+                e.preventDefault();
+                alert('Please upload at least one PDF file');
+                return false;
+            }
+            
+            // Show loading overlay
+            loadingOverlay.style.display = 'flex';
+            generateBtn.disabled = true;
+            
+            return true;
+        });
+
+        // Initialize difficulty sliders
+        document.querySelectorAll('input[type="range"]').forEach(slider => {
+            slider.addEventListener('input', updateDifficultyTotal);
+        });
+    </script>
+</body>
+</html>

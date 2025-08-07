@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if step == 'past_papers' %}Upload Past Papers{% else %}Upload Study Materials{% endif %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Raleway', sans-serif;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(90deg, #C7C5F4, #776BCC);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .upload-container {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0px 0px 24px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            color: white;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .upload-description {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #D4D3E8;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #D4D3E8;
+        }
+        .custom-file {
+            position: relative;
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .custom-file-input {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: calc(2.25rem + 2px);
+            margin: 0;
+            opacity: 0;
+        }
+        .custom-file-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 1;
+            height: calc(2.25rem + 2px);
+            padding: 0.375rem 0.75rem;
+            font-weight: 600;
+            line-height: 1.5;
+            color: #5D54A4;
+            background-color: rgba(255,255,255,0.9);
+            border-radius: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .custom-file-label::after {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 3;
+            display: block;
+            height: calc(2.25rem + 2px);
+            padding: 0.375rem 0.75rem;
+            line-height: 1.5;
+            color: #5D54A4;
+            content: "Browse";
+            background-color: rgba(255,255,255,0.7);
+            border-left: 1px solid #D4D3E8;
+            border-radius: 0 6px 6px 0;
+        }
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #fff;
+            color: #5D54A4;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn-primary:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: white;
+            border: 1px solid #D4D3E8;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            margin-top: 15px;
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+        .alert-error {
+            background: rgba(231, 76, 60, 0.2);
+            color: #f5b7b1;
+            border-left: 4px solid #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="upload-container">
+        {% if step == 'past_papers' %}
+            <h1><i class="fas fa-history"></i> Upload Past Question Papers</h1>
+            <p class="upload-description">
+                Upload 1-5 previous exam papers (only PDFs)<br>
+                First paper is required, others are optional
+            </p>
+        {% else %}
+            <h1><i class="fas fa-book"></i> Upload Study Materials</h1>
+            <p class="upload-description">
+                Upload {{ pdf_count }} PDF{{ 's' if pdf_count > 1 }} to generate questions from
+            </p>
+        {% endif %}
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i> {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="step" value="{{ step }}">
+            
+            {% if step == 'past_papers' %}
+                {# Show 5 file inputs but only first is required #}
+                {% for i in range(1, 6) %}
+                <div class="form-group">
+                    <label for="pdf_{{i}}">
+                        {% if i == 1 %}Past Paper (required){% else %}Past Paper {{i}} (optional){% endif %}
+                    </label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="pdf_{{i}}" name="pdfs" 
+                               {% if i == 1 %}required{% endif %}>
+                        <label class="custom-file-label" for="pdf_{{i}}">Choose file...</label>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                {# Show exact number of inputs needed for study materials #}
+                {% for i in range(pdf_count) %}
+                <div class="form-group">
+                    <label for="pdf_{{i}}">Study Material {{i+1}}:</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="pdf_{{i}}" name="pdfs" accept=".pdf" required>
+                        <label class="custom-file-label" for="pdf_{{i}}">Choose file...</label>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+            
+            <button type="submit" class="btn-primary">
+                {% if step == 'past_papers' %}
+                    <i class="fas fa-arrow-right"></i> Continue to Study Materials
+                {% else %}
+                    <i class="fas fa-magic"></i> Generate Questions
+                {% endif %}
+            </button>
+            
+            <a href="{{ url_for('ktu_question.index') }}" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Start Over
+            </a>
+        </form>
+    </div>
+
+    <script>
+        // Update file input labels
+        document.querySelectorAll('.custom-file-input').forEach(input => {
+            input.addEventListener('change', function() {
+                const label = this.nextElementSibling;
+                label.textContent = this.files[0]?.name || 'Choose file...';
+            });
+        });
+    </script>
+</body>
+</html>

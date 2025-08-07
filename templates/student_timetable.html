@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Timetable</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #00b894;
+            --accent-color: #fd79a8;
+            --warning-color: #fdcb6e;
+            --danger-color: #e84393;
+            --dark-bg: #2d3436;
+            --light-bg: #ddd;
+            --card-bg: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--gradient-1);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            margin: 30px 0 20px;
+        }
+
+        .class-info {
+            margin-bottom: 30px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .class-info p {
+            margin: 0;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .class-info strong {
+            color: var(--primary-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid #eee;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: var(--gradient-1);
+            font-weight: 700;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        tr:hover {
+            background: rgba(108, 92, 231, 0.05);
+        }
+
+        .no-timetable {
+            color: var(--text-secondary);
+            font-style: italic;
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 25px;
+            background: var(--gradient-3);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: none;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .back-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-table"></i> MY TIMETABLE</h1>
+        
+        <div class="class-info">
+            <p><strong>CLASS:</strong> {{ student_class.section }} (SEMESTER {{ student_class.sem }})</p>
+        </div>
+        
+        {% if timetable %}
+            {% for day, periods in timetable.items() %}
+            <h2>{{ day | upper }}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>PERIOD</th>
+                        <th>COURSE</th>
+                        <th>TEACHER</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for session in periods %}
+                    <tr>
+                        <td>{{ session.period }}</td>
+                        <td>{{ session.course_name }}</td>
+                        <td>{{ session.teacher_name }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endfor %}
+        {% else %}
+            <div class="no-timetable">
+                <p>No timetable found for this class.</p>
+            </div>
+        {% endif %}
+        
+        <a href="{{ url_for('student_dashboard') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i> BACK TO DASHBOARD
+        </a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generated Study Summary</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Raleway', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(90deg, #C7C5F4, #776BCC);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 30px;
+            background: linear-gradient(90deg, #5D54A4, #7C78B8);
+            box-shadow: 0px 0px 24px #5C5696;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: 120px;
+            height: 520px;
+            width: 520px;
+            background: rgba(255,255,255,0.1);
+            transform: rotate(45deg);
+            border-radius: 0 72px 0 0;
+            z-index: 0;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .summary-container {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .summary-header {
+            color: white;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .summary-content {
+            background: rgba(255,255,255,0.9);
+            color: #5D54A4;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0px 2px 4px rgba(0,0,0,0.1);
+            line-height: 1.8;
+            font-size: 0.95rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .summary-section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            color: #5D54A4;
+            background-color: rgba(255,255,255,0.7);
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .summary-item {
+            margin-bottom: 15px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .summary-item:before {
+            content: "•";
+            color: #7C78B8;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .key-point {
+            background-color: #a3e4a3;
+            color: #2c3e50;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 25px;
+            background: #fff;
+            color: #5D54A4;
+            text-decoration: none;
+            border-radius: 26px;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            box-shadow: 0px 2px 2px #5C5696;
+            border: 1px solid #D4D3E8;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0px 4px 6px #5C5696;
+        }
+
+        .btn i {
+            margin-right: 8px;
+            color: #7875B5;
+        }
+
+        .btn-download {
+            background: #a3e4a3;
+            color: #2c3e50;
+        }
+
+        .summary-meta {
+            text-align: center;
+            margin-bottom: 20px;
+            font-style: italic;
+            color: rgba(255,255,255,0.8);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .summary-content {
+                padding: 20px;
+                font-size: 0.85rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="summary-container">
+            <h1 class="summary-header"><i class="fas fa-file-alt"></i> Study Material Summary</h1>
+            <div class="summary-meta">
+                Generated on {{ current_date }} | Source PDFs: {{ pdf_count }}
+            </div>
+            
+            <div class="summary-content">
+                {% for line in summary %}
+                    {% if line.startswith('# ') %}
+                        <div class="summary-section">
+                            <div class="section-title">{{ line[2:] }}</div>
+                    {% elif line.startswith('## ') %}
+                        </div>
+                        <div class="summary-section">
+                            <div class="section-title">{{ line[3:] }}</div>
+                    {% elif line.startswith('### ') %}
+                        <div class="key-point">{{ line[4:] }}</div>
+                    {% else %}
+                        <div class="summary-item">
+                            {{ line }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="{{ url_for('ktu_summary.summary') }}" class="btn">
+                    <i class="fas fa-redo"></i> Generate Another
+                </a>
+                <button class="btn btn-download" id="downloadBtn">
+                    <i class="fas fa-download"></i> Download as PDF
+                </button>
+                <button class="btn" id="printBtn">
+                    <i class="fas fa-print"></i> Print Summary
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add download functionality
+            document.getElementById('downloadBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                // Implement PDF generation here
+                html2pdf()
+                    .from(document.querySelector('.summary-content'))
+                    .save('study-summary.pdf');
+            });
+            
+            // Add print functionality
+            document.getElementById('printBtn').addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Add floating chat button
+            const chatButton = document.createElement('div');
+            chatButton.className = 'chat-button';
+            chatButton.id = 'floatingChatButton';
+            chatButton.innerHTML = '<i class="fas fa-robot"></i>';
+            chatButton.title = 'AI Teaching Assistant';
+            chatButton.addEventListener('click', function() {
+                window.location.href = "{{ url_for('chatbot.chat_interface') }}";
+            });
+            document.body.appendChild(chatButton);
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                .chat-button {
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    width: 60px;
+                    height: 60px;
+                    background: linear-gradient(90deg, #5D54A4, #7C78B8);
+                    color: white;
+                    border-radius: 50%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    cursor: pointer;
+                    box-shadow: 0px 0px 24px #5C5696;
+                    z-index: 1000;
+                    transition: all 0.3s ease;
+                    border: 1px solid #D4D3E8;
+                }
+                .chat-button:hover {
+                    transform: scale(1.1) translateY(-5px);
+                    box-shadow: 0px 4px 12px #5C5696;
+                }
+                .chat-button i {
+                    font-size: 24px;
+                }
+                
+                @media print {
+                    body * {
+                        visibility: hidden;
+                    }
+                    .summary-content, .summary-content * {
+                        visibility: visible;
+                    }
+                    .summary-content {
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        background: white;
+                        color: black;
+                        padding: 20px;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+    <!-- Add html2pdf library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</body>
+</html>

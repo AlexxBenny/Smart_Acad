@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Question Paper Generator{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Main Professional Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    {% block extra_css %}
+    <style>
+    @media (max-width: 900px) {
+      .teacher-profile-courses-card {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 2rem;
+      }
+      .teacher-profile-courses-card > div {
+        margin-left: 0 !important;
+        min-width: 0 !important;
+        width: 100%;
+      }
+    }
+    </style>
+    {% endblock %}
+</head>
+<body>
+    <!-- Navigation (hidden on login page) -->
+    {% if request.endpoint != 'login' %}
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-university me-2"></i>Academic Portal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if session.get('user_type') == 'teacher' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('teacher_dashboard') }}">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if session.get('user_id') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">
+                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <!-- Flash Messages (hidden on login page) -->
+    {% if request.endpoint != 'login' %}
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    {% block content %}{% endblock %}
+
+    <!-- Footer (hidden on login page) -->
+    {% if request.endpoint != 'login' %}
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="mb-0">&copy; {{ now.year }} Academic Portal. All rights reserved.</p>
+        </div>
+    </footer>
+    {% endif %}
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Auto-hide flash messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    var bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+
+    <!-- Floating Chatbot Button and Chat Window -->
+    {% if session.get('user_id') and request.endpoint != 'login' %}
+    <div class="fab-chatbot" id="fabChatbot">
+        <i class="fas fa-robot"></i>
+    </div>
+    <div class="chat-popup" id="chatPopup">
+        <div class="chat-header">
+            <span><i class="fas fa-robot me-2"></i>AI Assistant</span>
+            <button type="button" class="close-chat" id="closeChatPopup" title="Close">&times;</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                <span>AI is typing...</span>
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="userInput" class="form-control" placeholder="Ask me anything..." autocomplete="off">
+            <button id="sendButton" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if session.get('user_id') %}
+    <style>
+        .fab-chatbot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1001;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        .fab-chatbot:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .fab-chatbot i {
+            font-size: 24px;
+        }
+        .chat-popup {
+            display: none;
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 350px;
+            height: 400px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(44,62,80,0.18);
+            z-index: 1002;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 12px 16px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .close-chat {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 22px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8f9fa;
+            max-height: 270px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        .user-message {
+            background: #007bff;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        .bot-message {
+            background: #e9ecef;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+        .chat-input {
+            display: flex;
+            gap: 10px;
+            padding: 10px 12px 12px 12px;
+            background: #fff;
+            border-top: 1px solid #e0e0e0;
+        }
+        .chat-input input {
+            flex-grow: 1;
+        }
+        .typing-indicator {
+            background: #e9ecef;
+            color: #666;
+            padding: 10px 15px;
+            border-radius: 15px;
+            width: fit-content;
+            font-style: italic;
+        }
+        .typing-indicator span::after {
+            content: '...';
+            animation: ellipsis 1.5s infinite;
+        }
+        @keyframes ellipsis {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+        }
+        @media (max-width: 500px) {
+            .chat-popup {
+                width: 98vw;
+                right: 1vw;
+                bottom: 80px;
+                height: 60vh;
+            }
+        }
+    </style>
+    <script>
+        let chatHistory = [];
+        const fabChatbot = document.getElementById('fabChatbot');
+        const chatPopup = document.getElementById('chatPopup');
+        const closeChatPopup = document.getElementById('closeChatPopup');
+        function openChatPopup() {
+            chatPopup.style.display = 'flex';
+            document.getElementById('userInput').focus();
+            // Initial greeting
+            document.getElementById('chatMessages').innerHTML = '<div class="typing-indicator" id="typingIndicator" style="display: none;"><span>AI is typing...</span></div>';
+            setTimeout(() => {
+                addMessage("Hello! I'm your AI Academic Assistant. I can help with:\n\n• Course information\n• Attendance queries\n• Grade explanations\n• Study tips\n\nHow can I assist you today?", 'bot');
+            }, 500);
+        }
+        function closeChat() {
+            chatPopup.style.display = 'none';
+        }
+        fabChatbot.addEventListener('click', function() {
+            if (chatPopup.style.display === 'flex') {
+                closeChat();
+            } else {
+                openChatPopup();
+            }
+        });
+        closeChatPopup.addEventListener('click', closeChat);
+        function sendMessage() {
+            const message = document.getElementById('userInput').value.trim();
+            if (message === '') return;
+            addMessage(message, 'user');
+            document.getElementById('userInput').value = '';
+            document.getElementById('typingIndicator').style.display = 'block';
+            scrollToBottom();
+            fetch('/chat/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    message: message,
+                    history: chatHistory
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('typingIndicator').style.display = 'none';
+                if (data.response) {
+                    addMessage(data.response, 'bot');
+                    chatHistory.push({ role: 'user', content: message });
+                    chatHistory.push({ role: 'assistant', content: data.response });
+                } else if (data.error) {
+                    addMessage(`Error: ${data.error}`, 'bot');
+                }
+            })
+            .catch(error => {
+                document.getElementById('typingIndicator').style.display = 'none';
+                addMessage(`Error: Could not connect to the AI assistant. Please try again later.`, 'bot');
+                console.error('Error:', error);
+            });
+        }
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+            messageDiv.textContent = text;
+            document.getElementById('chatMessages').appendChild(messageDiv);
+            scrollToBottom();
+        }
+        function scrollToBottom() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const sendButton = document.getElementById('sendButton');
+            const userInput = document.getElementById('userInput');
+            if (sendButton) {
+                sendButton.addEventListener('click', sendMessage);
+            }
+            if (userInput) {
+                userInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+        });
+    </script>
+    {% endif %}
+</body>
+</html> 

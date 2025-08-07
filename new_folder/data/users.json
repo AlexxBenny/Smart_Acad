@@ -1,0 +1,33 @@
+{
+    "1": {
+        "id": 1,
+        "username": "admin",
+        "email": "admin@example.com",
+        "password_hash": "admin123",
+        "competencies": {
+            "Critical Thinking": 0.5,
+            "Problem Solving": 0.5,
+            "Analytical Skills": 0.5,
+            "Technical Knowledge": 0.5,
+            "Communication": 0.5
+        },
+        "test_results": []
+    },
+    "2": {
+        "username": "cyriac",
+        "password": "123"
+    },
+    "3": {
+        "username": "daris",
+        "password": "123"
+    },
+    "4": {
+        "id": "4",
+        "username": "pullan",
+        "test_results": []
+    },
+    "5": {
+        "username": "alex",
+        "test_results": []
+    }
+}

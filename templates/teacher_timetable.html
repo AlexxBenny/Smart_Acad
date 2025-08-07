@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Teacher Timetable</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #00b894;
+            --accent-color: #fd79a8;
+            --warning-color: #fdcb6e;
+            --danger-color: #e84393;
+            --dark-bg: #2d3436;
+            --light-bg: #ddd;
+            --card-bg: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--gradient-1);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            margin: 30px 0 20px;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid #eee;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: var(--gradient-1);
+            font-weight: 700;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        tr:hover {
+            background: rgba(108, 92, 231, 0.05);
+            transform: translateX(5px);
+            transition: all 0.2s ease;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 25px;
+            background: var(--gradient-3);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: none;
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .back-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: var(--gradient-4);
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+
+        .chat-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-1);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(108, 92, 231, 0.4);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            border: 2px solid white;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 6px 25px rgba(108, 92, 231, 0.6);
+            background: var(--gradient-2);
+            animation: none;
+        }
+
+        .chat-button i {
+            font-size: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.1rem;
+            }
+            
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-table"></i> TEACHING SCHEDULE</h1>
+        
+        {% for day, periods in timetable.items() %}
+        <h2>{{ day | upper }}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>PERIOD</th>
+                    <th>COURSE</th>
+                    <th>CLASS</th>
+                    <th>SEMESTER</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in periods %}
+                <tr>
+                    <td>{{ session.period }}</td>
+                    <td>{{ session.course_name }}</td>
+                    <td>{{ session.section }}</td>
+                    <td>{{ session.sem }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endfor %}
+        
+        <a href="{{ url_for('teacher_dashboard') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i> BACK TO DASHBOARD
+        </a>
+    </div>
+
+    <div class="chat-button" id="floatingChatButton" title="AI Teaching Assistant">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Chat button functionality
+            document.getElementById('floatingChatButton').addEventListener('click', function() {
+                window.location.href = "{{ url_for('chatbot.chat_interface') }}";
+            });
+
+            // Add hover effects to table rows
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(5px)';
+                });
+                row.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<main class="main-content">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary-color: #6c5ce7;
+        --secondary-color: #00b894;
+        --accent-color: #fd79a8;
+        --warning-color: #fdcb6e;
+        --danger-color: #e84393;
+        --dark-bg: #2d3436;
+        --light-bg: #ddd;
+        --card-bg: #ffffff;
+        --text-primary: #2d3436;
+        --text-secondary: #636e72;
+        --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+    
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: var(--gradient-1) !important;
+        color: var(--text-primary);
+        min-height: 100vh;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 700;
+    }
+    
+    .game-card {
+        background: var(--card-bg);
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .game-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-1);
+    }
+    
+    .game-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        border-color: var(--primary-color);
+    }
+    
+    .btn-game {
+        background: var(--gradient-1);
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: bold;
+        font-family: 'Orbitron', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+    
+    .btn-game:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        color: white;
+    }
+    
+    .btn-game-special {
+        background: linear-gradient(135deg, #fd79a8 0%, #f093fb 100%);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-family: 'Orbitron', sans-serif;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+    }
+    
+    .xp-display {
+        background: var(--gradient-4);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: bold;
+        display: inline-block;
+        margin: 10px 0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .level-badge {
+        background: var(--gradient-2);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 0.9rem;
+        display: inline-block;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .progress {
+        height: 10px;
+        border-radius: 5px;
+        background: var(--light-bg);
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .progress-bar {
+        border-radius: 5px;
+        background: var(--gradient-3);
+        position: relative;
+        overflow: hidden;
+    }
+</style>
+
+<div class="container" style="max-width:900px;margin:40px auto;">
+    <!-- Profile Card -->
+    <div class="game-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0" style="background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Welcome, {{ student.name }}</h2>
+            <a href="{{ url_for('logout') }}" class="btn-game" style="padding: 8px 20px; font-size: 0.9rem;">LOGOUT</a>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <p style="color: var(--text-primary);"><strong style="color: var(--primary-color);">USN:</strong> {{ student.USN }}</p>
+                <p style="color: var(--text-primary);"><strong style="color: var(--primary-color);">Department:</strong> {{ student.dept_name }}</p>
+                <p style="color: var(--text-primary);"><strong style="color: var(--primary-color);">Semester:</strong> {{ student.sem }}</p>
+                <p style="color: var(--text-primary);"><strong style="color: var(--primary-color);">Section:</strong> {{ student.section }}</p>
+            </div>
+            <div class="col-md-6">
+                <div class="xp-display text-center" style="margin-top: 1rem;">
+                    <div class="level-badge">LEVEL {{ student.sem }}</div>
+                    <div class="progress mt-3">
+                        <div class="progress-bar" role="progressbar" style="width: {{ (student.sem/8)*100 }}%" aria-valuenow="{{ (student.sem/8)*100 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <small style="color: var(--text-secondary); font-size: 0.8rem;">Semester Progress</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Courses Card -->
+    <div class="game-card">
+        <h3 style="background: var(--gradient-2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1.5rem;">MY COURSES</h3>
+        <ul class="list-group list-group-flush">
+            {% for course in courses %}
+            <li class="list-group-item" style="border: none; border-bottom: 1px solid rgba(108, 92, 231, 0.2); padding: 1rem; transition: all 0.3s ease;">
+                <i class="fas fa-book" style="color: var(--primary-color); margin-right: 10px;"></i>
+                {{ course.name }} <span class="badge" style="background: var(--gradient-3); font-family: 'Orbitron', sans-serif; font-weight: 500;">{{ course.shortname }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex flex-wrap gap-3 justify-content-center">
+        <a href="{{ url_for('student_attendance') }}" class="btn-game">ATTENDANCE</a>
+        <a href="{{ url_for('student_marks') }}" class="btn-game">MARKS</a>
+        <a href="{{ url_for('student_timetable') }}" class="btn-game">TIMETABLE</a>
+        <a href="{{ url_for('employability.index') }}" class="btn-game-special">EMPLOYABILITY GAME</a>
+    </div>
+</div>
+</main>
+{% endblock %}

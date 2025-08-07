@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Enter Marks</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #00b894;
+            --accent-color: #fd79a8;
+            --warning-color: #fdcb6e;
+            --danger-color: #e84393;
+            --dark-bg: #2d3436;
+            --light-bg: #ddd;
+            --card-bg: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--gradient-1);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: var(--primary-color);
+            position: relative;
+        }
+
+        h1 {
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            margin: 30px 0 20px;
+            font-size: 1.3rem;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            background: white;
+            border: 2px solid #eee;
+            border-radius: 30px;
+            color: var(--primary-color);
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236c5ce7'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+        #students-container {
+            margin: 25px 0;
+            position: relative;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0 30px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid #eee;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: var(--gradient-1);
+            font-weight: 700;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        tr:hover {
+            background: rgba(108, 92, 231, 0.05);
+        }
+
+        input[type="text"] {
+            width: 80px;
+            padding: 10px 12px;
+            background: white;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            color: var(--primary-color);
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+        input[type="submit"] {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 30px;
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin: 20px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="submit"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: var(--gradient-2);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 25px;
+            background: var(--gradient-3);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .back-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: var(--gradient-4);
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+
+        .error {
+            color: var(--danger-color);
+            font-weight: 600;
+            position: relative;
+        }
+
+        .chat-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-1);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(108, 92, 231, 0.4);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            border: 2px solid white;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 6px 25px rgba(108, 92, 231, 0.6);
+            background: var(--gradient-2);
+            animation: none;
+        }
+
+        .chat-button i {
+            font-size: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.1rem;
+            }
+            
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            input[type="text"] {
+                width: 60px;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-edit"></i> ENTER MARKS</h1>
+        
+        <form method="POST">
+            <h2><i class="fas fa-book"></i> SELECT COURSE</h2>
+            <select id="assign_id" name="assign_id" required>
+                <option value="">Select a Course</option>
+                {% for course in assigned_courses %}
+                <option value="{{ course.assign_id }}">
+                    {{ course.course_name }} - {{ course.section }} SEMESTER {{ course.sem }}
+                </option>
+                {% endfor %}
+            </select>
+            
+            <h2><i class="fas fa-clipboard-list"></i> MARKS DETAILS</h2>
+            <select id="marks_name" name="marks_name" required>
+                <option value="">Select Assessment Type</option>
+                <option value="Event 1">EVENT 1</option>
+                <option value="Event 2">EVENT 2</option>
+                <option value="Internal test 1">INTERNAL TEST 1</option>
+                <option value="Internal test 2">INTERNAL TEST 2</option>
+                <option value="Internal test 3">INTERNAL TEST 3</option>
+                <option value="Semester End Exam">SEMESTER END EXAM</option>
+            </select>
+            
+            <div id="students-container"></div>
+            
+            <input type="hidden" 
+                   name="course_id" 
+                   value="{{ selected_course.course_id if selected_course else '' }}">
+            
+            <input type="submit" 
+                   formaction="{{ url_for('save_marks') }}" 
+                   value="SAVE MARKS">
+        </form>
+        
+        <a href="{{ url_for('teacher_dashboard') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i> BACK TO DASHBOARD
+        </a>
+    </div>
+
+    <div class="chat-button" id="floatingChatButton" title="AI Teaching Assistant">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <script>
+        function loadStudents() {
+            const assignId = document.getElementById('assign_id').value;
+            const studentsDiv = document.getElementById('students-container');
+            const marksNameSelect = document.getElementById('marks_name');
+            
+            if (!assignId) {
+                studentsDiv.innerHTML = '';
+                return;
+            }
+
+            // Show loading state
+            studentsDiv.innerHTML = '<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading students...</div>';
+            
+            // Fetch students and course details
+            Promise.all([
+                fetch(`/teacher/mark-attendance/get-students?assign_id=${assignId}`).then(res => res.json()),
+                fetch(`/teacher/get-course-details?assign_id=${assignId}`).then(res => res.json())
+            ])
+            .then(([students, courseDetails]) => {
+                // Update the hidden course_id field
+                document.querySelector('input[name="course_id"]').value = courseDetails.course_id;
+                
+                const selectedMarksName = marksNameSelect.value;
+                return fetch(`/teacher/get-existing-marks?assign_id=${assignId}&marks_name=${selectedMarksName}`)
+                    .then(res => res.json())
+                    .then(existingMarks => {
+                        let tableHtml = `
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>USN</th>
+                                        <th>NAME</th>
+                                        <th>PREVIOUS MARKS</th>
+                                        <th>MARKS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+                        
+                        students.forEach(student => {
+                            const existingMark = existingMarks.find(m => m.student_usn === student.USN);
+                            const previousMark = existingMark ? existingMark.marks : '0';
+                            
+                            tableHtml += `
+                                <tr>
+                                    <td>${student.USN}</td>
+                                    <td>${student.name}</td>
+                                    <td>${previousMark}</td>
+                                    <td>
+                                        <input type="text" 
+                                               name="marks_${student.USN}" 
+                                               value="${previousMark}"
+                                               placeholder="Marks" 
+                                               pattern="[0-9]+" 
+                                               title="Please enter a valid number"
+                                               required>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        
+                        tableHtml += `</tbody></table>`;
+                        studentsDiv.innerHTML = tableHtml;
+                    });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                studentsDiv.innerHTML = `<div class="error"><i class="fas fa-exclamation-circle"></i> Error loading students</div>`;
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            const assignIdSelect = document.getElementById('assign_id');
+            const marksNameSelect = document.getElementById('marks_name');
+            
+            assignIdSelect.addEventListener('change', loadStudents);
+            marksNameSelect.addEventListener('change', () => {
+                if (assignIdSelect.value) {
+                    loadStudents();
+                }
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            
+            // Chat button functionality
+            document.getElementById('floatingChatButton').addEventListener('click', function() {
+                window.location.href = "{{ url_for('chatbot.chat_interface') }}";
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generated KTU Questions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Raleway', sans-serif;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(90deg, #C7C5F4, #776BCC);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 30px;
+            background: #fff;
+            box-shadow: 0px 0px 24px #5C5696;
+            border-radius: 15px;
+            position: relative;
+        }
+        .questions-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        .paper-meta {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        .ktu-header {
+            color: #5D54A4;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .paper-section {
+            margin-bottom: 30px;
+            border: 1px solid #eee;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .section-title {
+            font-size: 1.2em;
+            color: #5D54A4;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        .question-item {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            position: relative;
+        }
+        .sub-question {
+            margin-left: 30px;
+        }
+        .marks-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #28a745;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+        .action-buttons {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            background: #5D54A4;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #776BCC;
+            transform: translateY(-2px);
+        }
+        .btn i {
+            margin-right: 8px;
+        }
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+            }
+            .action-buttons {
+                display: none;
+            }
+            .question-item {
+                break-inside: avoid;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="questions-container">
+            <h1 class="ktu-header"><i class="fas fa-file-alt"></i> KTU-Style Question Paper</h1>
+            <div class="paper-meta">
+                Generated on {{ current_date }}
+            </div>
+            
+            <div class="question-paper">
+                {% set current_section = None %}
+                {% for line in questions %}
+                    {% if line.startswith('**PART') %}
+                        {% if current_section %}
+                            </div>
+                        {% endif %}
+                        {% set current_section = line %}
+                        <div class="paper-section">
+                            <div class="section-title">{{ line.replace('**', '') }}</div>
+                    {% else %}
+                        <div class="question-item {% if line.startswith('a)') or line.startswith('b)') %}sub-question{% endif %}">
+                            {{ line }}
+                            {% if '[' in line and 'Marks' in line %}
+                                {% set marks = line|regex_search('\[(\d+)\s*Marks\]') %}
+                                {% if marks %}
+                                    <span class="marks-badge">{{ marks[1] }} Marks</span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                {% if current_section %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="action-buttons">
+                <a href="{{ url_for('ktu_question.index') }}" class="btn">
+                    <i class="fas fa-redo"></i> Generate Another
+                </a>
+                <button class="btn" id="downloadBtn">
+                    <i class="fas fa-download"></i> Download as PDF
+                </button>
+                <button class="btn" id="printBtn">
+                    <i class="fas fa-print"></i> Print Paper
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add download functionality
+            document.getElementById('downloadBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                generateStructuredPDF();
+            });
+            
+            // Add print functionality
+            document.getElementById('printBtn').addEventListener('click', function() {
+                window.print();
+            });
+        });
+
+        function generateStructuredPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Set font
+            doc.setFont("helvetica");
+
+            // Title
+            doc.setFontSize(16);
+            doc.text("KTU QUESTION PAPER", doc.internal.pageSize.width/2, 20, { align: 'center' });
+
+            // Date and Info
+            doc.setFontSize(10);
+            doc.text("Generated on: {{ current_date }}", doc.internal.pageSize.width/2, 30, { align: 'center' });
+
+            let yPos = 40;
+            const margin = 20;
+            const pageWidth = doc.internal.pageSize.width;
+            const maxWidth = pageWidth - (margin * 2);
+
+            // Extract and format questions
+            const questions = [];
+            let currentSection = '';
+            document.querySelectorAll('.question-item').forEach(item => {
+                const sectionTitle = item.closest('.paper-section')?.querySelector('.section-title')?.textContent;
+                if (sectionTitle && sectionTitle !== currentSection) {
+                    currentSection = sectionTitle;
+                    questions.push({ type: 'section', text: sectionTitle });
+                }
+                
+                const questionText = item.textContent.trim();
+                questions.push({
+                    type: 'question',
+                    text: questionText,
+                    isSubQuestion: item.classList.contains('sub-question')
+                });
+            });
+
+            // Write questions to PDF
+            questions.forEach(q => {
+                // Check if new page is needed
+                if (yPos > doc.internal.pageSize.height - 20) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+
+                if (q.type === 'section') {
+                    yPos += 5;
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text(q.text, margin, yPos);
+                    yPos += 10;
+                } else {
+                    doc.setFontSize(10);
+                    doc.setFont('helvetica', 'normal');
+                    
+                    let xPos = margin;
+                    if (q.isSubQuestion) {
+                        xPos += 10;
+                    }
+
+                    const textLines = doc.splitTextToSize(q.text, maxWidth - (q.isSubQuestion ? 10 : 0));
+                    textLines.forEach(line => {
+                        doc.text(line, xPos, yPos);
+                        yPos += 6;
+                    });
+                    yPos += 2;
+                }
+            });
+
+            // Save the PDF
+            doc.save('ktu-question-paper.pdf');
+        }
+    </script>
+</body>
+</html>

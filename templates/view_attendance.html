@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Attendance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Raleway', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(90deg, #C7C5F4, #776BCC);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 30px;
+            background: linear-gradient(90deg, #5D54A4, #7C78B8);
+            box-shadow: 0px 0px 24px #5C5696;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: 120px;
+            height: 520px;
+            width: 520px;
+            background: rgba(255,255,255,0.1);
+            transform: rotate(45deg);
+            border-radius: 0 72px 0 0;
+            z-index: 0;
+        }
+
+        h1, h2 {
+            color: white;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h2 {
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            padding-bottom: 10px;
+        }
+
+        form {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(5px);
+            position: relative;
+            z-index: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #D4D3E8;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 26px;
+            color: #5D54A4;
+            font-weight: 600;
+            box-shadow: 0px 2px 4px rgba(0,0,0,0.1);
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%235D54A4'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        input[type="submit"] {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 25px;
+            background: #fff;
+            color: #5D54A4;
+            border: none;
+            border-radius: 26px;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            box-shadow: 0px 2px 2px #5C5696;
+            border: 1px solid #D4D3E8;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 0px 4px 6px #5C5696;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0 30px;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(5px);
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        th {
+            background: rgba(255,255,255,0.2);
+            font-weight: 700;
+            color: #D4D3E8;
+        }
+
+        tr:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .attendance-good { color: #a3e4a3; font-weight: 700; }
+        .attendance-warning { color: #f9e79f; font-weight: 700; }
+        .attendance-poor { color: #f5b7b1; font-weight: 700; }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 25px;
+            background: #fff;
+            color: #5D54A4;
+            text-decoration: none;
+            border-radius: 26px;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            box-shadow: 0px 2px 2px #5C5696;
+            border: 1px solid #D4D3E8;
+            margin-top: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .back-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0px 4px 6px #5C5696;
+        }
+
+        .back-link i {
+            margin-right: 8px;
+            color: #7875B5;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-calendar-check"></i> View Attendance</h1>
+        
+        <form method="POST">
+            <label for="assign_id">Select Course and Class:</label>
+            <select name="assign_id" id="assign_id">
+                {% for course in assigned_courses %}
+                <option value="{{ course.assign_id }}">
+                    {{ course.course_name }} - {{ course.section }} (Sem {{ course.sem }})
+                </option>
+                {% endfor %}
+            </select>
+            
+            <input type="submit" value="View Attendance">
+        </form>
+        
+        {% if selected_course %}
+        <h2>Attendance for {{ selected_course.course_name }} - {{ selected_course.section }} (Sem {{ selected_course.sem }})</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>USN</th>
+                    <th>Student Name</th>
+                    <th>Present Days</th>
+                    <th>Total Days</th>
+                    <th>Attendance %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in attendance_records %}
+                <tr>
+                    <td>{{ record.USN }}</td>
+                    <td>{{ record.name }}</td>
+                    <td>{{ record.present_days }}</td>
+                    <td>{{ record.total_days }}</td>
+                    <td class="
+                        {% if record.attendance_percentage >= 75 %}attendance-good
+                        {% elif record.attendance_percentage >= 50 %}attendance-warning
+                        {% else %}attendance-poor
+                        {% endif %}
+                    ">
+                        {{ record.attendance_percentage }}%
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ url_for('teacher_dashboard') }}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatButton = document.createElement('div');
+            chatButton.className = 'chat-button';
+            chatButton.id = 'floatingChatButton';
+            chatButton.innerHTML = '<i class="fas fa-robot"></i>';
+            chatButton.title = 'AI Teaching Assistant';
+            chatButton.addEventListener('click', function() {
+                window.location.href = "{{ url_for('chatbot.chat_interface') }}";
+            });
+            document.body.appendChild(chatButton);
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                .chat-button {
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    width: 60px;
+                    height: 60px;
+                    background: linear-gradient(90deg, #5D54A4, #7C78B8);
+                    color: white;
+                    border-radius: 50%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    cursor: pointer;
+                    box-shadow: 0px 0px 24px #5C5696;
+                    z-index: 1000;
+                    transition: all 0.3s ease;
+                    border: 1px solid #D4D3E8;
+                }
+                .chat-button:hover {
+                    transform: scale(1.1) translateY(-5px);
+                    box-shadow: 0px 4px 12px #5C5696;
+                }
+                .chat-button i {
+                    font-size: 24px;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>

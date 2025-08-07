@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Error Occurred</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Raleway', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(90deg, #C7C5F4, #776BCC);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+        }
+
+        .error-container {
+            background: rgba(231, 76, 60, 0.2);
+            padding: 40px;
+            border-radius: 15px;
+            color: #f5b7b1;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            border-left: 5px solid #e74c3c;
+            box-shadow: 0px 0px 24px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .error-container::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            height: 200px;
+            width: 200px;
+            background: rgba(255,255,255,0.1);
+            transform: rotate(45deg);
+            border-radius: 0 72px 0 0;
+            z-index: 0;
+        }
+
+        h1 {
+            color: #f5b7b1;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        p {
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 25px;
+            background: #fff;
+            color: #5D54A4;
+            text-decoration: none;
+            border-radius: 26px;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            box-shadow: 0px 2px 2px #5C5696;
+            border: 1px solid #D4D3E8;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0px 4px 6px #5C5696;
+        }
+
+        .btn i {
+            margin-right: 8px;
+            color: #7875B5;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            color: #e74c3c;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 600px) {
+            .error-container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-container">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h1>Error Generating Questions</h1>
+            <p>{{ error }}</p>
+            <a href="{{ url_for('ktu_question.index') }}" class="btn">
+                <i class="fas fa-redo"></i> Try Again
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add floating chat button
+            const chatButton = document.createElement('div');
+            chatButton.className = 'chat-button';
+            chatButton.id = 'floatingChatButton';
+            chatButton.innerHTML = '<i class="fas fa-robot"></i>';
+            chatButton.title = 'AI Teaching Assistant';
+            chatButton.addEventListener('click', function() {
+                window.location.href = "{{ url_for('chat_interface') }}";
+            });
+            document.body.appendChild(chatButton);
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                .chat-button {
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    width: 60px;
+                    height: 60px;
+                    background: linear-gradient(90deg, #5D54A4, #7C78B8);
+                    color: white;
+                    border-radius: 50%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    cursor: pointer;
+                    box-shadow: 0px 0px 24px #5C5696;
+                    z-index: 1000;
+                    transition: all 0.3s ease;
+                    border: 1px solid #D4D3E8;
+                }
+                .chat-button:hover {
+                    transform: scale(1.1) translateY(-5px);
+                    box-shadow: 0px 4px 12px #5C5696;
+                }
+                .chat-button i {
+                    font-size: 24px;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>

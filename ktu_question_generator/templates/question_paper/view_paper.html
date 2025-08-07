@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>{{ paper.title }}</h2>
+                <div>
+                    <a href="{{ url_for('question_paper.download_paper', paper_id=paper.id) }}" class="btn btn-primary">
+                        <i class="fas fa-download"></i> Download PDF
+                    </a>
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editPaperModal">
+                        <i class="fas fa-edit"></i> Edit Paper
+                    </button>
+                </div>
+            </div>
+
+            <!-- Paper Details -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Paper Details</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Generated On:</strong> {{ paper.generated_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                            {% if paper.template_id %}
+                            <p><strong>Template:</strong> {{ template.name }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Difficulty Distribution:</strong></p>
+                            <ul>
+                                <li>Easy: {{ difficulty_distribution.easy }}%</li>
+                                <li>Medium: {{ difficulty_distribution.medium }}%</li>
+                                <li>Hard: {{ difficulty_distribution.hard }}%</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Paper Content -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Question Paper</h5>
+                    {% for section_name, questions in sections.items() %}
+                    <div class="section mb-4">
+                        <h4 class="section-title">{{ section_name }}</h4>
+                        <ol class="question-list">
+                            {% for question in questions %}
+                            <li class="mb-3">
+                                <div class="question-content">
+                                    {{ question.text }}
+                                    <span class="badge bg-info float-end">
+                                        [{{ question.marks }} Marks]
+                                        {% if question.difficulty %}
+                                        <span class="badge bg-secondary ms-1">{{ question.difficulty|title }}</span>
+                                        {% endif %}
+                                    </span>
+                                    {% if question.options %}
+                                    <ol type="a" class="mt-2">
+                                        {% for option in question.options %}
+                                        <li>{{ option }}</li>
+                                        {% endfor %}
+                                    </ol>
+                                    {% endif %}
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Paper Modal -->
+<div class="modal fade" id="editPaperModal" tabindex="-1" aria-labelledby="editPaperModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editPaperModalLabel">Edit Question Paper</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editPaperForm" method="POST" action="{{ url_for('question_paper.edit_paper', paper_id=paper.id) }}">
+                    {% for section_name, questions in sections.items() %}
+                    <div class="section mb-4">
+                        <h5>{{ section_name }}</h5>
+                        {% for question in questions %}
+                        <div class="mb-3">
+                            <label class="form-label">Question {{ loop.index }}</label>
+                            <textarea class="form-control" name="questions[{{ section_name }}][{{ loop.index0 }}]" rows="3">{{ question.text }}</textarea>
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <input type="number" class="form-control" name="marks[{{ section_name }}][{{ loop.index0 }}]" 
+                                           value="{{ question.marks }}" placeholder="Marks">
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-select" name="difficulty[{{ section_name }}][{{ loop.index0 }}]">
+                                        <option value="easy" {% if question.difficulty == 'easy' %}selected{% endif %}>Easy</option>
+                                        <option value="medium" {% if question.difficulty == 'medium' %}selected{% endif %}>Medium</option>
+                                        <option value="hard" {% if question.difficulty == 'hard' %}selected{% endif %}>Hard</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="editPaperForm" class="btn btn-primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.section-title {
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.question-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.question-list li {
+    counter-increment: question-counter;
+    position: relative;
+    padding-left: 2rem;
+}
+
+.question-list li::before {
+    content: counter(question-counter) ".";
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+.question-content {
+    position: relative;
+    padding-right: 120px;
+}
+
+.badge {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+/* OVERRIDE: Make the card (white box) much wider */
+.card {
+    max-width: 1200px !important;
+    width: 100%;
+}
+</style>
+{% endblock %} 

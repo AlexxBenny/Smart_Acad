@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(90deg, #C7C5F4, #776BCC);
+        min-height: 100vh;
+    }
+    .container {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        border: none;
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    h1, h5, .card-title {
+        color: #776BCC;
+        font-weight: bold;
+    }
+    .btn-primary {
+        background: linear-gradient(90deg, #776BCC, #C7C5F4);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+        background: linear-gradient(90deg, #C7C5F4, #776BCC);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(119, 107, 204, 0.4);
+    }
+    .form-control {
+        border-radius: 5px;
+        border: 1px solid rgba(119, 107, 204, 0.2);
+        padding: 10px;
+    }
+    .form-control:focus {
+        border-color: #776BCC;
+        box-shadow: 0 0 0 0.2rem rgba(119, 107, 204, 0.25);
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="text-center mb-4">Register</h1>
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-danger">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p>Already have an account? <a href="{{ url_for('login') }}" class="text-decoration-none">Login here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
